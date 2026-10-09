@@ -1,3 +1,83 @@
+# OpenClaw PL — Kapitan Pazur na macOS
+
+Fork projektu [pjasicek/OpenClaw](https://github.com/pjasicek/OpenClaw) przystosowany do **polskiego wydania gry „Kapitan Pazur”** i budowany natywnie na **macOS (Apple Silicon)**.
+
+Repozytorium nie zawiera danych gry. Do grania potrzebna jest własna kopia polskiej wersji (płyta lub obraz ISO).
+
+## Co zmienia ten fork
+
+- **Grafika:** przezroczystość grafik PCX liczona po indeksie palety, dzięki czemu znika różowe tło pod napisami w polskim menu.
+- **Menu:** polskie napisy są wyśrodkowane według ich rzeczywistej szerokości.
+- **Okno:** okno można dowolnie powiększać; obraz skaluje się z zachowaniem proporcji.
+- **Muzyka:** muzyka MIDI w poziomach gra przez FluidSynth z oryginalnym soundfontem gry.
+- **Opcje:** nowe strony „Ekran” (pełny ekran / okno) i „Poziom trudności”; ustawienia zapisują się w `config.xml`.
+- **Rozgrywka:** podnoszenie, noszenie i rzucanie beczek z prochem.
+- **Filmy:** odtwarzanie oryginalnych filmów (logo, intro, przerywniki między rozdziałami, strona „Odtwórz film”).
+- **Poprawki:** naprawiona awaria ekranu wyników i brakujące dźwięki z polskim `CLAW.REZ`.
+
+## Budowanie na macOS
+
+Wymagane: Xcode Command Line Tools, [Homebrew](https://brew.sh) i CMake.
+
+```bash
+brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx
+```
+
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/include/SDL2" \
+  -DCMAKE_EXE_LINKER_FLAGS="-L/opt/homebrew/lib"
+make -j$(sysctl -n hw.ncpu)
+```
+
+`-DCMAKE_OSX_ARCHITECTURES=arm64` jest ważne, gdy CMake działa pod Rosettą (np. zainstalowany w `/usr/local`) — inaczej budowa idzie pod x86_64 i linker odrzuca biblioteki z Homebrew. Plik wykonywalny trafia do `Build_Release/openclaw`.
+
+## Dane z polskiej płyty
+
+Zamontuj płytę lub obraz ISO (dwuklik w Finderze) i skopiuj do katalogu `Build_Release`:
+
+| Plik na płycie | Cel | Do czego |
+|---|---|---|
+| `DATA/CLAW.REZ` | `Build_Release/CLAW.REZ` | grafika, dźwięki, poziomy (wymagany) |
+| `MUSIC/CLAW4.SF2`, `MUSIC/CLAW.SF2` | `Build_Release/` | brzmienia do muzyki MIDI |
+| `MOVIES/claw.fec` | `Build_Release/CLAW.FEC` | filmy |
+
+Przykład (ścieżkę `/Volumes/...` dopasuj do nazwy zamontowanej płyty):
+
+```bash
+cp "/Volumes/KAPITAN PAZUR/DATA/CLAW.REZ" Build_Release/
+cp "/Volumes/KAPITAN PAZUR/MUSIC/"*.SF2 Build_Release/
+cp "/Volumes/KAPITAN PAZUR/MOVIES/claw.fec" Build_Release/CLAW.FEC
+```
+
+Wszystkie te pliki są w `.gitignore`, więc nie trafią przypadkiem do repozytorium. Filmy można wyłączyć, dopisując do `config.xml` (wewnątrz `<Configuration>`) sekcję `<Movies><PlayMovies>false</PlayMovies></Movies>`.
+
+## Uruchomienie
+
+```bash
+cd Build_Release && ./openclaw
+```
+
+## Sterowanie
+
+| Klawisz | Akcja |
+|---|---|
+| ← → | ruch |
+| ↑ ↓ | wspinanie; ↓ także kucanie |
+| Spacja | skok |
+| lewy Ctrl | atak; przy beczce: podniesienie / rzut |
+| lewy Option (Alt) | strzał / rzut bronią (przytrzymaj przy dynamicie, żeby rzucić dalej) |
+| lewy Shift | zmiana broni |
+| Esc | menu pauzy |
+| ` | konsola deweloperska |
+
+Działają tylko lewe klawisze Ctrl, Option i Shift. Alternatywny układ (WASD + mysz) włącza `<UseAlternateControls>true</UseAlternateControls>` w `config.xml`.
+
+---
+
+*Poniżej oryginalny opis projektu OpenClaw.*
+
 # OpenClaw - Captain Claw (1997) reimplementation
 
  - This project is a multiplatform C++ reimplementation of original Captain Claw (1997) platformer game
@@ -142,3 +222,7 @@ Zip all content inside `Build_Release/ASSETS` directory to `ASSETS.ZIP` file.
   `~/OpenClaw/Build_Release$ mono ClawLauncher.exe`
  
 -  **TODO** - add screenshots
+
+---
+
+*Port na macOS i obsługę polskiej wersji „Kapitan Pazur” ogarnął Claude Opus 5.5 (Anthropic) w Claude Code — od budowania, przez naprawę grafiki, muzyki i menu, po podnoszenie beczek i odtwarzanie filmów — pod okiem Mateusza Skowrona.*
