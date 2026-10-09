@@ -9,6 +9,7 @@
 #include "../Resource/Loaders/XmlLoader.h"
 #include "../Util/PrimeSearch.h"
 #include "ScoreScreen/EndLevelScoreScreen.h"
+#include "Cutscene.h"
 
 const uint32 g_InvalidGameViewId = 0xFFFFFFFF;
 
@@ -103,7 +104,7 @@ void HumanView::VOnRender(uint32 msDiff)
 
         if (!m_bPostponeRenderPresent)
         {
-            SDL_RenderPresent(renderer);
+            Util::RenderPresent(renderer);
         }
     }
 }
@@ -310,6 +311,8 @@ void HumanView::RegisterAllDelegates()
     IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::SoundEnabledChangedDelegate), EventData_Sound_Enabled_Changed::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(
+        this, &HumanView::FullscreenChangedDelegate), EventData_Fullscreen_Changed::sk_EventType);
+    IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::ClawDiedDelegate), EventData_Claw_Died::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::TeleportActorDelegate), EventData_Teleport_Actor::sk_EventType);
@@ -323,6 +326,8 @@ void HumanView::RegisterAllDelegates()
         this, &HumanView::BossFightEndedDelegate), EventData_Boss_Fight_Ended::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::IngameMenuEndGameDelegate), EventData_IngameMenu_End_Game::sk_EventType);
+    IEventMgr::Get()->VAddListener(MakeDelegate(
+        this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
     
 }
 
@@ -346,6 +351,8 @@ void HumanView::RemoveAllDelegates()
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::SoundEnabledChangedDelegate), EventData_Sound_Enabled_Changed::sk_EventType);
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
+        this, &HumanView::FullscreenChangedDelegate), EventData_Fullscreen_Changed::sk_EventType);
+    IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::ClawDiedDelegate), EventData_Claw_Died::sk_EventType);
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::TeleportActorDelegate), EventData_Teleport_Actor::sk_EventType);
@@ -359,6 +366,8 @@ void HumanView::RemoveAllDelegates()
         this, &HumanView::BossFightEndedDelegate), EventData_Boss_Fight_Ended::sk_EventType);
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::BossFightEndedDelegate), EventData_Boss_Fight_Ended::sk_EventType);
+    IEventMgr::Get()->VRemoveListener(MakeDelegate(
+        this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
 }
 
 //=====================================================================================================================
@@ -633,8 +642,10 @@ void HumanView::RequestPlaySoundDelegate(IEventDataPtr pEventData)
             if (play)
             {
                 shared_ptr<Mix_Chunk> pSound = WavResourceLoader::LoadAndReturnSound(pSoundInfo->soundToPlay.c_str());
-                assert(pSound != nullptr);
-                g_pApp->GetAudio()->PlaySound(pSound.get(), soundProperties);
+                if (pSound != nullptr)
+                {
+                    g_pApp->GetAudio()->PlaySound(pSound.get(), soundProperties);
+                }
             }
         }
     }
@@ -711,6 +722,30 @@ void HumanView::EnterMenuDelegate(IEventDataPtr pEventData)
     //g_pApp->GetGameLogic()->UnloadLevel();
 
     g_pApp->GetGameLogic()->VChangeState(GameState_LoadingMenu);
+}
+
+void HumanView::PlayCutsceneDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EventData_Play_Cutscene> pCastEventData =
+        static_pointer_cast<EventData_Play_Cutscene>(pEventData);
+
+    m_ScreenElements.clear();
+    m_pScene.reset();
+    m_pHUD.reset();
+    m_pIngameMenu.reset();
+
+    m_pCamera->SetParent(nullptr);
+    m_pCamera->SetTarget(nullptr);
+
+    g_pApp->GetAudio()->StopAllSounds();
+    if (g_pApp->GetGameLogic()->GetGameState() != GameState_Cutscene)
+    {
+        g_pApp->GetGameLogic()->VChangeState(GameState_Cutscene);
+    }
+
+    shared_ptr<ScreenElementCutscene> pCutscene(new ScreenElementCutscene(g_pApp->GetRenderer(),
+        pCastEventData->GetMovies(), pCastEventData->GetFinishedEvent()));
+    VPushElement(pCutscene);
 }
 
 void HumanView::FinishedLevelDelegate(IEventDataPtr pEventData)
@@ -792,6 +827,8 @@ void HumanView::SetVolumeDelegate(IEventDataPtr pEventData)
                 g_pApp->GetAudio()->SetSoundVolume(pCastEventData->GetVolume());
             }
         }
+
+        g_pApp->SaveGameOptions();
     }
 }
 
@@ -810,6 +847,20 @@ void HumanView::SoundEnabledChangedDelegate(IEventDataPtr pEventData)
         {
             g_pApp->GetAudio()->SetSoundActive(pCastEventData->GetIsEnabled());
         }
+
+        g_pApp->SaveGameOptions();
+    }
+}
+
+void HumanView::FullscreenChangedDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EventData_Fullscreen_Changed> pCastEventData =
+        static_pointer_cast<EventData_Fullscreen_Changed>(pEventData);
+
+    if (pCastEventData)
+    {
+        g_pApp->SetFullscreen(pCastEventData->GetIsFullscreen());
+        g_pApp->SaveGameOptions();
     }
 }
 

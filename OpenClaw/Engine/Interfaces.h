@@ -585,6 +585,7 @@ public:
     virtual bool VIsAwake(uint32_t actorId) = 0;
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32_t fromFlag, uint32_t toFlag) = 0;
+    virtual void VSetCollisionMask(uint32_t actorId, uint32_t collisionMask) = 0;
 
     virtual void VActivate(uint32_t actorId) = 0;
     virtual void VDeactivate(uint32_t actorId) = 0;

@@ -426,7 +426,10 @@ namespace Util
     int GetSoundDurationMs(const std::string& soundPath)
     {
         shared_ptr<Mix_Chunk> pSound = WavResourceLoader::LoadAndReturnSound(soundPath.c_str());
-        assert(pSound != nullptr);
+        if (pSound == nullptr)
+        {
+            return -1;
+        }
         return GetSoundDurationMs(pSound.get());
     }
 
@@ -546,8 +549,59 @@ namespace Util
         return pTextureRect;
     }
 
-    void RenderForcePresent(SDL_Renderer* pRenderer) {
+    // Largest rect with source aspect ratio centered within destination
+    SDL_Rect GetLetterboxRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+        SDL_Rect rect;
+        if ((int64_t)dstWidth * srcHeight > (int64_t)dstHeight * srcWidth)
+        {
+            rect.h = dstHeight;
+            rect.w = (int)((int64_t)dstHeight * srcWidth / srcHeight);
+        }
+        else
+        {
+            rect.w = dstWidth;
+            rect.h = (int)((int64_t)dstWidth * srcHeight / srcWidth);
+        }
+        rect.x = (dstWidth - rect.w) / 2;
+        rect.y = (dstHeight - rect.h) / 2;
+
+        return rect;
+    }
+
+    void RenderPresent(SDL_Renderer* pRenderer) {
+        // When the game renders into a fixed-size frame texture (resizable window),
+        // scale that frame into the window keeping its aspect ratio
+        SDL_Texture* pFrame = SDL_GetRenderTarget(pRenderer);
+        if (pFrame == NULL)
+        {
+            SDL_RenderPresent(pRenderer);
+            return;
+        }
+
+        float scaleX, scaleY;
+        Uint8 r, g, b, a;
+        int frameWidth, frameHeight, outputWidth, outputHeight;
+        SDL_RenderGetScale(pRenderer, &scaleX, &scaleY);
+        SDL_GetRenderDrawColor(pRenderer, &r, &g, &b, &a);
+        SDL_QueryTexture(pFrame, NULL, NULL, &frameWidth, &frameHeight);
+
+        SDL_SetRenderTarget(pRenderer, NULL);
+        SDL_RenderSetScale(pRenderer, 1.0f, 1.0f);
+        SDL_GetRendererOutputSize(pRenderer, &outputWidth, &outputHeight);
+        SDL_Rect frameRect = GetLetterboxRect(frameWidth, frameHeight, outputWidth, outputHeight);
+
+        SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
+        SDL_RenderClear(pRenderer);
+        SDL_RenderCopy(pRenderer, pFrame, NULL, &frameRect);
         SDL_RenderPresent(pRenderer);
+
+        SDL_SetRenderTarget(pRenderer, pFrame);
+        SDL_RenderSetScale(pRenderer, scaleX, scaleY);
+        SDL_SetRenderDrawColor(pRenderer, r, g, b, a);
+    }
+
+    void RenderForcePresent(SDL_Renderer* pRenderer) {
+        RenderPresent(pRenderer);
 #ifdef __EMSCRIPTEN__
         // Update screen manually. SDL_RenderPresent does nothing.
         emscripten_sleep(0);

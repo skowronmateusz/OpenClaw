@@ -50,6 +50,10 @@ struct GameOptions
         userDirectory = "";
 
         startupCommandsFile = "startup_commands.txt";
+
+        moviesFile = "CLAW.FEC";
+        playMovies = true;
+        skipLogoMovies = false;
     }
 
     GameOptions()
@@ -98,6 +102,11 @@ struct GameOptions
 
     // File with prewritten commands which are executed upon startup of the game
     std::string startupCommandsFile;
+
+    // Movies (cutscenes)
+    std::string moviesFile;
+    bool playMovies;
+    bool skipLogoMovies;
 };
 
 // Cheats and stuff
@@ -250,6 +259,7 @@ public:
     // HW Events
     void OnEvent(SDL_Event& event);
     void OnDisplayChange(int newWidth, int newHeight);
+    void MapWindowPointToFrame(Sint32* pX, Sint32* pY);
     void VOnRestore();
     void VOnMinimized();
 
@@ -277,6 +287,8 @@ public:
 
     SDL_Window* GetWindow() const { return m_pWindow; }
     Point GetWindowSize() { return m_WindowSize; }
+    void SetFullscreen(bool isFullscreen);
+    bool IsFullscreen() const;
     void SetWindowSize(int width, int height, double scale);
     Point GetWindowSizeScaled() { return Point(m_WindowSize.x / GetScale().x, m_WindowSize.y / GetScale().y); }
     void RequestWindowSizeChange(Point newSize, bool fullscreen);
@@ -345,6 +357,7 @@ private:
 
     SDL_Window* m_pWindow;
     SDL_Renderer* m_pRenderer;
+    SDL_Texture* m_pFrameTexture;
     WapPal* m_pPalette;
 
     bool m_IsRunning;

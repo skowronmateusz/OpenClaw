@@ -92,6 +92,21 @@ bool Audio::Initialize(const GameOptions& config)
     {
         return false;
     }
+#elif !defined(__EMSCRIPTEN__)
+    // SDL_mixer's FluidSynth backend plays nothing without a SoundFont.
+    // Prefer one given via SDL_SOUNDFONTS, otherwise use the game's own from its CD (MUSIC dir).
+    if (SDL_getenv("SDL_SOUNDFONTS") == NULL)
+    {
+        const char* soundFonts[] = { "CLAW4.SF2", "CLAW.SF2" };
+        for (const char* soundFont : soundFonts)
+        {
+            if (std::ifstream(soundFont).good())
+            {
+                Mix_SetSoundFonts(soundFont);
+                break;
+            }
+        }
+    }
 #endif //_WIN32
 
     SetSoundVolume(m_SoundVolume);

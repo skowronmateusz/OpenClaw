@@ -282,6 +282,14 @@ static IEventDataPtr XmlElemToGeneratedEvent(TiXmlElement* pElem)
         pEventData.reset(new EventData_Menu_LoadGame(levelNumber, isNewGame, checkpointNumber));
         //pEventData.reset(new EventData_Finished_Level());
     }
+    else if (eventType == "PlayCutscene")
+    {
+        int movie;
+        ParseValueFromXmlElem(&movie, pElem->FirstChildElement("Movie"));
+
+        pEventData.reset(new EventData_Play_Cutscene(std::vector<int>(1, movie),
+            IEventDataPtr(new EventData_Enter_Menu())));
+    }
     else if (eventType == "QuitGame")
     {
         pEventData.reset(new EventData_Quit_Game());
@@ -294,6 +302,17 @@ static IEventDataPtr XmlElemToGeneratedEvent(TiXmlElement* pElem)
         ParseValueFromXmlElem(&isMusic, pElem->FirstChildElement("IsMusic"));
 
         pEventData.reset(new EventData_Sound_Enabled_Changed(isEnabled, isMusic));
+    }
+    else if (eventType == "ChangeFullscreenEnabled")
+    {
+        bool isEnabled;
+        if (!ParseValueFromXmlElem(&isEnabled, pElem->FirstChildElement("IsEnabled")))
+        {
+            LOG_ERROR("No IsEnabled defined in ChangeFullscreenEnabled event !");
+            return nullptr;
+        }
+
+        pEventData.reset(new EventData_Fullscreen_Changed(isEnabled));
     }
     else if (eventType == "ModifyMenuItemVisibility")
     {
@@ -368,6 +387,10 @@ static IEventDataPtr XmlElemToGeneratedEvent(TiXmlElement* pElem)
 }
 
 Point g_MenuScale = Point(1.0, 1.0);
+
+// Menu items are laid out in the original 640x480 menu space
+static const int MENU_WIDTH = 640;
+static const double MENU_CENTERING_TOLERANCE = 100.0;
 
 //-----------------------------------------------------------------------------
 //
@@ -967,7 +990,8 @@ ScreenElementMenuItem::ScreenElementMenuItem(SDL_Renderer* pRenderer)
     m_pRenderer(pRenderer),
     m_State(MenuItemState_None),
     m_Hotkey(SDL_SCANCODE_UNKNOWN),
-    m_bVisible(true)
+    m_bVisible(true),
+    m_bCenterHorizontally(false)
 {
 
 }
@@ -1002,7 +1026,7 @@ void ScreenElementMenuItem::VOnRender(uint32 msDiff)
     }
 
     SDL_Rect renderRect;
-    renderRect.x = (int)((m_Position.x + pCurrImage->GetOffsetX()) * g_MenuScale.x);
+    renderRect.x = (int)(GetImageX(pCurrImage) * g_MenuScale.x);
     renderRect.y = (int)(m_Position.y * g_MenuScale.y);
     renderRect.w = (int)(pCurrImage->GetWidth() * g_MenuScale.x);
     renderRect.h = (int)(pCurrImage->GetHeight() * g_MenuScale.y);
@@ -1112,6 +1136,20 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
                 m_bVisible = true;
             }
         }
+        else if (conditionTypeStr == "FullscreenOn")
+        {
+            if (g_pApp->IsFullscreen())
+            {
+                m_bVisible = true;
+            }
+        }
+        else if (conditionTypeStr == "FullscreenOff")
+        {
+            if (!g_pApp->IsFullscreen())
+            {
+                m_bVisible = true;
+            }
+        }
         // TODO: Implement these ones
         else if (conditionTypeStr == "VoiceOn")
         {
@@ -1147,6 +1185,16 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
     if (shared_ptr<Image> pImage = LoadImageFromXmlElement(pElem->FirstChildElement("ActiveImage")))
     {
         m_Images.insert(std::make_pair(MenuItemState_Active, pImage));
+    }
+
+    // XML positions were laid out for the English images. Localized releases have captions
+    // of different widths, so captions meant to sit in the middle of the menu are centered
+    // by their actual width. Off-center items (e.g. level select columns) and slider knobs keep XML position.
+    if ((m_Type == MenuItemType_Button || m_Type == MenuItemType_Text) && m_Images.count(m_State) != 0)
+    {
+        const double menuCenterX = MENU_WIDTH / 2.0;
+        const double xmlCenterX = m_Position.x + m_Images[m_State]->GetWidth() / 2.0;
+        m_bCenterHorizontally = fabs(xmlCenterX - menuCenterX) <= MENU_CENTERING_TOLERANCE;
     }
 
     /*for (TiXmlElement* pMenuItemImageElem = pElem->FirstChildElement("MenuItemImage");
@@ -1368,13 +1416,23 @@ void ScreenElementMenuItem::OnStateChanged(MenuItemState newState, MenuItemState
     }
 }
 
+int ScreenElementMenuItem::GetImageX(const shared_ptr<Image>& pImage) const
+{
+    if (m_bCenterHorizontally)
+    {
+        return (MENU_WIDTH - pImage->GetWidth()) / 2;
+    }
+
+    return (int)m_Position.x + pImage->GetOffsetX();
+}
+
 SDL_Rect ScreenElementMenuItem::GetMenuItemRect()
 {
     int itemWidth, itemHeight;
     SDL_QueryTexture(m_Images[m_State]->GetTexture(), NULL, NULL, &itemWidth, &itemHeight);
 
     SDL_Rect itemRect;
-    itemRect.x = (int)m_Position.x;
+    itemRect.x = GetImageX(m_Images[m_State]);
     itemRect.y = (int)m_Position.y;
     itemRect.w = itemWidth;
     itemRect.h = itemHeight;

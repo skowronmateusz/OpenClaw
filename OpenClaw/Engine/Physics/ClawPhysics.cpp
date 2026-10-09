@@ -1209,6 +1209,19 @@ void ClawPhysics::VChangeCollisionFlag(uint32_t actorId, uint32 fromFlag, uint32
     }
 }
 
+void ClawPhysics::VSetCollisionMask(uint32_t actorId, uint32 collisionMask)
+{
+    if (b2Body* pBody = FindBox2DBody(actorId))
+    {
+        for (b2Fixture* pFixture = pBody->GetFixtureList(); pFixture != NULL; pFixture = pFixture->GetNext())
+        {
+            b2Filter filter = pFixture->GetFilterData();
+            filter.maskBits = collisionMask;
+            pFixture->SetFilterData(filter);
+        }
+    }
+}
+
 SDL_Rect ClawPhysics::VGetAABB(uint32_t actorId, bool discardSensors)
 {
     SDL_Rect aabbRect = { 0, 0, 0, 0 };

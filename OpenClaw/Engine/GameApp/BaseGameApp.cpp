@@ -44,6 +44,7 @@ BaseGameApp::BaseGameApp()
     m_pEventMgr = NULL;
     m_pWindow = NULL;
     m_pRenderer = NULL;
+    m_pFrameTexture = NULL;
     m_pPalette = NULL;
     m_pAudio = NULL;
     m_pConsoleFont = NULL;
@@ -99,9 +100,13 @@ void BaseGameApp::Terminate()
 {
     LOG("Terminating...");
 
+    // Has to be done before audio and window are destroyed since current state is taken from them
+    SaveGameOptions();
+
     RemoveAllDelegates();
 
     SAFE_DELETE(m_pGame);
+    SDL_DestroyTexture(m_pFrameTexture);
     SDL_DestroyRenderer(m_pRenderer);
     SDL_DestroyWindow(m_pWindow);
     SAFE_DELETE(m_pAudio);
@@ -117,8 +122,6 @@ void BaseGameApp::Terminate()
         delete actorProto.second;
     }
     m_ActorXmlPrototypeMap.clear();
-
-    SaveGameOptions();
 }
 
 #define STARTUP_TEST(condition, error) \
@@ -339,6 +342,15 @@ void BaseGameApp::OnEvent(SDL_Event& event)
         case SDL_MOUSEWHEEL:
         case SDL_UserTouchEvent:
         {
+            if (event.type == SDL_MOUSEMOTION)
+            {
+                MapWindowPointToFrame(&event.motion.x, &event.motion.y);
+            }
+            else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
+            {
+                MapWindowPointToFrame(&event.button.x, &event.button.y);
+            }
+
             if (m_pGame)
             {
                 for (GameViewList::reverse_iterator iter = m_pGame->m_GameViews.rbegin();
@@ -374,6 +386,26 @@ void BaseGameApp::OnEvent(SDL_Event& event)
 void BaseGameApp::OnDisplayChange(int newWidth, int newHeight)
 {
     LOG("Display changed. New Width-Height: " + ToStr(newWidth) + "-" + ToStr(newHeight));
+}
+
+// Mouse events come in window coordinates, game expects coordinates within the rendered frame
+void BaseGameApp::MapWindowPointToFrame(Sint32* pX, Sint32* pY)
+{
+    if (m_pFrameTexture == NULL)
+    {
+        return;
+    }
+
+    int windowWidth, windowHeight;
+    SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+    SDL_Rect frameRect = Util::GetLetterboxRect((int)m_WindowSize.x, (int)m_WindowSize.y, windowWidth, windowHeight);
+    if (frameRect.w <= 0 || frameRect.h <= 0)
+    {
+        return;
+    }
+
+    *pX = (Sint32)((*pX - frameRect.x) * m_WindowSize.x / frameRect.w);
+    *pY = (Sint32)((*pY - frameRect.y) * m_WindowSize.y / frameRect.h);
 }
 
 void BaseGameApp::VOnRestore()
@@ -568,6 +600,20 @@ bool BaseGameApp::LoadGameOptions(const char* inConfigFile)
     }
 
     //-------------------------------------------------------------------------
+    // Movies
+    //-------------------------------------------------------------------------
+    TiXmlElement* moviesElem = configRoot->FirstChildElement("Movies");
+    if (moviesElem)
+    {
+        ParseValueFromXmlElem(&m_GameOptions.moviesFile,
+            moviesElem->FirstChildElement("MoviesFile"));
+        ParseValueFromXmlElem(&m_GameOptions.playMovies,
+            moviesElem->FirstChildElement("PlayMovies"));
+        ParseValueFromXmlElem(&m_GameOptions.skipLogoMovies,
+            moviesElem->FirstChildElement("SkipLogoMovies"));
+    }
+
+    //-------------------------------------------------------------------------
     // Font
     //-------------------------------------------------------------------------
     TiXmlElement* fontRootElem = configRoot->FirstChildElement("Font");
@@ -728,10 +774,128 @@ bool BaseGameApp::LoadGameOptions(const char* inConfigFile)
     return true;
 }
 
+static void SetXmlChildElementText(TiXmlElement* pParentElem, const char* elemName, const std::string& value)
+{
+    TiXmlElement* pElem = pParentElem->FirstChildElement(elemName);
+    if (pElem == NULL)
+    {
+        pElem = new TiXmlElement(elemName);
+        pParentElem->LinkEndChild(pElem);
+    }
+
+    pElem->Clear();
+    pElem->LinkEndChild(new TiXmlText(value.c_str()));
+}
+
+static TiXmlElement* GetOrCreateXmlChildElement(TiXmlElement* pParentElem, const char* elemName)
+{
+    TiXmlElement* pElem = pParentElem->FirstChildElement(elemName);
+    if (pElem == NULL)
+    {
+        pElem = new TiXmlElement(elemName);
+        pParentElem->LinkEndChild(pElem);
+    }
+
+    return pElem;
+}
+
+// Only options which can be changed from within the game are written back,
+// the rest of the config file (including comments) is kept as it is
 void BaseGameApp::SaveGameOptions(const char* outConfigFile)
 {
-    LOG_ERROR("Not implemented yet!");
-    return;
+    if (m_pAudio)
+    {
+        m_GameOptions.soundVolume = m_pAudio->GetSoundVolume();
+        m_GameOptions.musicVolume = m_pAudio->GetMusicVolume();
+        m_GameOptions.soundOn = m_pAudio->IsSoundActive();
+        m_GameOptions.musicOn = m_pAudio->IsMusicActive();
+    }
+
+    if (m_pWindow)
+    {
+        if (!IsFullscreen())
+        {
+            m_GameOptions.isFullscreen = false;
+            m_GameOptions.isFullscreenDesktop = false;
+        }
+        else if (!m_GameOptions.isFullscreen)
+        {
+            m_GameOptions.isFullscreenDesktop = true;
+        }
+    }
+
+    // Keep whitespace inside values (e.g. console prompt) as it is in the file
+    TiXmlDocument xmlConfig;
+    const bool wasWhiteSpaceCondensed = TiXmlBase::IsWhiteSpaceCondensed();
+    TiXmlBase::SetCondenseWhiteSpace(false);
+    const bool isConfigLoaded = xmlConfig.LoadFile(outConfigFile);
+    TiXmlBase::SetCondenseWhiteSpace(wasWhiteSpaceCondensed);
+    if (!isConfigLoaded)
+    {
+        xmlConfig = CreateAndReturnDefaultConfig(outConfigFile);
+    }
+
+    TiXmlElement* pConfigRoot = xmlConfig.RootElement();
+    if (pConfigRoot == NULL)
+    {
+        LOG_ERROR("Could not save game options - config file has no root element");
+        return;
+    }
+
+    TiXmlElement* pDisplayElem = GetOrCreateXmlChildElement(pConfigRoot, "Display");
+    SetXmlChildElementText(pDisplayElem, "IsFullscreen", m_GameOptions.isFullscreen ? "true" : "false");
+    SetXmlChildElementText(pDisplayElem, "IsFullscreenDesktop", m_GameOptions.isFullscreenDesktop ? "true" : "false");
+
+    TiXmlElement* pAudioElem = GetOrCreateXmlChildElement(pConfigRoot, "Audio");
+    SetXmlChildElementText(pAudioElem, "SoundVolume", ToStr(m_GameOptions.soundVolume));
+    SetXmlChildElementText(pAudioElem, "MusicVolume", ToStr(m_GameOptions.musicVolume));
+    SetXmlChildElementText(pAudioElem, "SoundOn", m_GameOptions.soundOn ? "true" : "false");
+    SetXmlChildElementText(pAudioElem, "MusicOn", m_GameOptions.musicOn ? "true" : "false");
+
+    // Same indentation as the shipped config file so that only changed values differ
+    TiXmlPrinter printer;
+    printer.SetIndent("  ");
+    xmlConfig.Accept(&printer);
+
+    FILE* pConfigFile = fopen(outConfigFile, "w");
+    if (pConfigFile == NULL || fwrite(printer.CStr(), 1, printer.Size(), pConfigFile) != printer.Size())
+    {
+        LOG_ERROR("Failed to save game options to: " + std::string(outConfigFile));
+    }
+    if (pConfigFile != NULL)
+    {
+        fclose(pConfigFile);
+    }
+}
+
+void BaseGameApp::SetFullscreen(bool isFullscreen)
+{
+    if (m_pWindow == NULL || isFullscreen == IsFullscreen())
+    {
+        return;
+    }
+
+    // Game is rendered into a fixed size frame which is letterboxed into the window,
+    // so switching between windowed and desktop fullscreen needs no further changes
+    if (SDL_SetWindowFullscreen(m_pWindow, isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) != 0)
+    {
+        LOG_ERROR("Failed to change fullscreen mode: " + std::string(SDL_GetError()));
+        return;
+    }
+
+    m_GameOptions.isFullscreen = false;
+    m_GameOptions.isFullscreenDesktop = isFullscreen;
+}
+
+bool BaseGameApp::IsFullscreen() const
+{
+    if (m_pWindow == NULL)
+    {
+        return false;
+    }
+
+    // SDL_WINDOW_FULLSCREEN_DESKTOP contains SDL_WINDOW_FULLSCREEN bit
+    return (SDL_GetWindowFlags(m_pWindow) & SDL_WINDOW_FULLSCREEN) != 0;
 }
 
 //=====================================================================================================================
@@ -780,8 +944,13 @@ bool BaseGameApp::InitializeDisplay(GameOptions& gameOptions)
         return false;
     }
 
+    uint32 windowFlags = SDL_WINDOW_SHOWN;
+#if !defined(__EMSCRIPTEN__) && !defined(ANDROID)
+    windowFlags |= SDL_WINDOW_RESIZABLE;
+#endif
+
     m_pWindow = SDL_CreateWindow(VGetGameTitle(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        gameOptions.windowWidth, gameOptions.windowHeight, SDL_WINDOW_SHOWN);
+        gameOptions.windowWidth, gameOptions.windowHeight, windowFlags);
     if (m_pWindow == NULL)
     {
         LOG_ERROR("Failed to create main window");
@@ -813,6 +982,26 @@ bool BaseGameApp::InitializeDisplay(GameOptions& gameOptions)
         LOG_ERROR("Failed to create SDL2 Renderer. Error: %s" + std::string(SDL_GetError()));
         return false;
     }
+
+#if !defined(__EMSCRIPTEN__) && !defined(ANDROID)
+    // Game is laid out for configured window size, so it is rendered into a frame of that size
+    // which is then scaled into the (resizable) window - see Util::RenderPresent
+    // Scale quality hint applies to textures created after it is set
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    m_pFrameTexture = SDL_CreateTexture(m_pRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET,
+        m_GameOptions.windowWidth, m_GameOptions.windowHeight);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    if (m_pFrameTexture != NULL && SDL_SetRenderTarget(m_pRenderer, m_pFrameTexture) == 0)
+    {
+        SDL_SetWindowMinimumSize(m_pWindow, 320, 240);
+    }
+    else
+    {
+        LOG_WARNING("Failed to create frame texture, resized window will not be scaled: " + std::string(SDL_GetError()));
+        SDL_DestroyTexture(m_pFrameTexture);
+        m_pFrameTexture = NULL;
+    }
+#endif
 
     SDL_RenderSetScale(m_pRenderer, (float)gameOptions.scale, (float)gameOptions.scale);
 

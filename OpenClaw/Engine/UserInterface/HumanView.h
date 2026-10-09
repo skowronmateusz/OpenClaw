@@ -74,6 +74,7 @@ protected:
     void LoadGameDelegate(IEventDataPtr pEventData);
     void SetVolumeDelegate(IEventDataPtr pEventData);
     void SoundEnabledChangedDelegate(IEventDataPtr pEventData);
+    void FullscreenChangedDelegate(IEventDataPtr pEventData);
     void ClawDiedDelegate(IEventDataPtr pEventData);
     void TeleportActorDelegate(IEventDataPtr pEventData);
     void EnterMenuDelegate(IEventDataPtr pEventData);
@@ -81,6 +82,7 @@ protected:
     void ActorEnteredBossAreaDelegate(IEventDataPtr pEventData);
     void BossFightEndedDelegate(IEventDataPtr pEventData);
     void IngameMenuEndGameDelegate(IEventDataPtr pEventData);
+    void PlayCutsceneDelegate(IEventDataPtr pEventData);
 
     uint32 m_ViewId;
     uint32 m_ActorId;

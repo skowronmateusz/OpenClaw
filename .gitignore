@@ -5,6 +5,7 @@ Build_Release/*_obj
 Build_Release/libwap_obj
 Build_Release/obj
 Build_Release/CLAW.REZ
+Build_Release/CLAW.FEC
 Build_Release/LEVEL[0-9]*.xml
 Build_Release/SAVES_test.XML
 Build_Release/startup_commands.txt
@@ -32,3 +33,9 @@ Build_Release/vim.exe.stackdump
 *.iobj
 *.ipdb
 *.exp
+*.iso
+Build_Release/*.SF2
+Build_Release/MOVIES/
+Build_Release/openclaw
+build/
+side-session-notes/

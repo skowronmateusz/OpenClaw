@@ -71,6 +71,12 @@ shared_ptr<Mix_Chunk> WavResourceLoader::LoadAndReturnSound(const char* resource
     Resource resource(resourceString);
 
     shared_ptr<ResourceHandle> handle = g_pApp->GetResourceCache()->GetHandle(&resource);
+    if (!handle)
+    {
+        LOG_WARNING("Could not load sound: " + std::string(resourceString));
+        return NULL;
+    }
+
     shared_ptr<WavResourceExtraData> extraData = std::static_pointer_cast<WavResourceExtraData>(handle->GetExtraData());
 
     if (!extraData)

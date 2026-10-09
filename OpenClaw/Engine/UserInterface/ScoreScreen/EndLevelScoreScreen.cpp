@@ -10,6 +10,7 @@
 #include "../../Actor/Components/PositionComponent.h"
 
 #include "ScoreScreenProcesses.h"
+#include "../Cutscene.h"
 
 //=================================================================================================
 //
@@ -485,6 +486,15 @@ void ScreenElementScoreScreen::LoadNextLevel()
     IEventMgr::Get()->VAbortAllEvents();
 
     IEventDataPtr pEvent(new EventData_Menu_LoadGame(nextLevelNum, false, 0));
+
+    // Some levels are followed by a movie, next level is loaded after it
+    int movie = Cutscenes::GetMovieAfterLevel(nextLevelNum - 1);
+    if (movie != -1 && Cutscenes::AreAvailable())
+    {
+        IEventDataPtr pLoadLevelEvent = pEvent;
+        pEvent.reset(new EventData_Play_Cutscene(std::vector<int>(1, movie), pLoadLevelEvent));
+    }
+
     IEventMgr::Get()->VQueueEvent(pEvent);
 }
 
@@ -700,7 +710,10 @@ bool ScreenElementScoreScreen::Initialize(TiXmlElement* pScoreScreenRootElem)
         StrongProcessPtr pClawCommentSoundProc(new PlaySoundProcess(soundInfo));
         QueueDelayedProcess(pClawCommentSoundProc, delay);
 
-        clawFinishDialogTime = delay + Util::GetSoundDurationMs(sound);
+        // Some localized releases (e.g. Polish "Kapitan Pazur") do not ship
+        // Claw's score screen comments - just skip the dialog in that case
+        int soundDurationMs = Util::GetSoundDurationMs(sound);
+        clawFinishDialogTime = delay + (soundDurationMs > 0 ? soundDurationMs : 0);
     }
     else
     {

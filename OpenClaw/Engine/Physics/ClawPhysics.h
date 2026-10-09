@@ -60,6 +60,7 @@ public:
     virtual bool VIsAwake(uint32_t actorId) override;
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32 fromFlag, uint32 toFlag) override;
+    virtual void VSetCollisionMask(uint32_t actorId, uint32 collisionMask) override;
 
     virtual void VActivate(uint32_t actorId) override;
     virtual void VDeactivate(uint32_t actorId) override;
@@ -196,6 +197,7 @@ public:
     virtual bool VIsAwake(uint32_t actorId) override { return false; }
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32 fromFlag, uint32 toFlag) override { }
+    virtual void VSetCollisionMask(uint32_t actorId, uint32 collisionMask) override { }
 
     virtual void VActivate(uint32_t actorId) override { }
     virtual void VDeactivate(uint32_t actorId) override { }

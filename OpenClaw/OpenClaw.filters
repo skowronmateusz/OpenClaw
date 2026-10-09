@@ -117,6 +117,15 @@
     <ClCompile Include="Engine\UserInterface\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\UserInterface\Cutscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Video\MovieArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Video\SmackerDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\Graphics2D\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -217,6 +226,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Actor\Components\ExplodeableComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Actor\Components\PowderKegComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Actor\Components\GlitterComponent.cpp">
@@ -455,6 +467,15 @@
     <ClInclude Include="Engine\UserInterface\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\UserInterface\Cutscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Video\MovieArchive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Video\SmackerDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Engine\Graphics2D\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -561,6 +582,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Actor\Components\ExplodeableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Actor\Components\PowderKegComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Actor\Components\AIComponents\TogglePegAIComponent.h">

@@ -287,11 +287,14 @@ public:
     void OnStateChanged(MenuItemState newState, MenuItemState oldState);
 
 private:
+    int GetImageX(const shared_ptr<Image>& pImage) const;
+
     std::string m_Name;
     MenuItemState m_State;
     Point m_DefaultPosition;
     Point m_Position;
     bool m_bVisible;
+    bool m_bCenterHorizontally;
     MenuItemType m_Type;
 
     EventList m_GeneratedEventList;

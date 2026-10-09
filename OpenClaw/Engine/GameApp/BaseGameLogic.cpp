@@ -1,5 +1,6 @@
 #include "../Actor/ActorFactory.h"
 #include "../UserInterface/HumanView.h"
+#include "../UserInterface/Cutscene.h"
 #include "../Events/Events.h"
 #include "../Resource/Loaders/XmlLoader.h"
 #include "../Resource/Loaders/PalLoader.h"
@@ -353,7 +354,20 @@ bool BaseGameLogic::VLoadGame(const char* xmlLevelResource)
     // Load game save data
     const CheckpointSave* pCheckpointSave = m_pGameSaveMgr->GetCheckpointSave(
         m_pCurrentLevel->m_LeveNumber, m_pCurrentLevel->m_LoadedCheckpoint);
-    assert(pCheckpointSave != NULL);
+    CheckpointSave defaultCheckpointSave;
+    if (pCheckpointSave == NULL)
+    {
+        // Can happen e.g. when skipping menu to a level which was not reached yet
+        LOG_WARNING("No save for level " + ToStr(m_pCurrentLevel->m_LeveNumber) + ", checkpoint " +
+            ToStr(m_pCurrentLevel->m_LoadedCheckpoint) + " - using new game stats");
+        defaultCheckpointSave.checkpointIdx = m_pCurrentLevel->m_LoadedCheckpoint;
+        defaultCheckpointSave.health = 100;
+        defaultCheckpointSave.lives = 3;
+        defaultCheckpointSave.bulletCount = 10;
+        defaultCheckpointSave.magicCount = 5;
+        defaultCheckpointSave.dynamiteCount = 3;
+        pCheckpointSave = &defaultCheckpointSave;
+    }
 
     loadingProgress = 95.0f;
     RenderLoadingScreen(pBackgroundImage, backgroundRect, scale, loadingProgress);
@@ -760,7 +774,18 @@ void BaseGameLogic::VOnUpdate(uint32 msDiff)
             }
             else
             {
-                VChangeState(GameState_Menu);
+                // Play logo and intro movies, then enter menu
+                std::vector<int> startupMovies = Cutscenes::GetStartupMovies();
+                if (!startupMovies.empty())
+                {
+                    VChangeState(GameState_Cutscene);
+                    IEventMgr::Get()->VQueueEvent(IEventDataPtr(new EventData_Play_Cutscene(
+                        startupMovies, IEventDataPtr(new EventData_Enter_Menu()))));
+                }
+                else
+                {
+                    VChangeState(GameState_Menu);
+                }
             }
 #endif
             break;
@@ -790,6 +815,11 @@ void BaseGameLogic::VOnUpdate(uint32 msDiff)
         }
 
         case GameState_ScoreScreen:
+        {
+            break;
+        }
+
+        case GameState_Cutscene:
         {
             break;
         }

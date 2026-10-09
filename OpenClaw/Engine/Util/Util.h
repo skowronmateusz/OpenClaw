@@ -38,6 +38,8 @@ namespace Util
     SDL_Texture* CreateSDLTextureRect(int width, int height, SDL_Color color, SDL_Renderer* pRenderer);
     SDL_Texture* CreateSDLTextureRect(int width, int height, SDL_Color color, SDL_Renderer* pRenderer, uint8_t alpha);
 
+    SDL_Rect GetLetterboxRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight);
+    void RenderPresent(SDL_Renderer* pRenderer);
     void RenderForcePresent(SDL_Renderer* pRenderer);
 
     void Sleep(Uint32 ms);

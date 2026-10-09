@@ -17,6 +17,7 @@
 #include "../Actor/Components/SpringBoardComponent.h"
 #include "../Actor/Components/ConveyorBeltComponent.h"
 #include "../Actor/Components/AuraComponents/AuraComponent.h"
+#include "../Actor/Components/PowderKegComponent.h"
 
 int numFootContacts = 0;
 
@@ -479,6 +480,48 @@ void PhysicsContactListener::BeginContact(b2Contact* pContact)
                 {
                     pProjectileComponent->OnCollidedWithSolidTile();
                 }
+            }
+        }
+    }
+    // Thrown powder keg contact
+    {
+        b2Fixture* pKegFixture = pFixtureA;
+        b2Fixture* pOtherFixture = pFixtureB;
+        for (int i = 0; i < 2; i++, std::swap(pKegFixture, pOtherFixture))
+        {
+            if (pKegFixture->GetUserData() != (void*)FixtureType_PowderKeg ||
+                pKegFixture->GetBody()->GetUserData() == NULL)
+            {
+                continue;
+            }
+
+            Actor* pKegActor = static_cast<Actor*>(pKegFixture->GetBody()->GetUserData());
+            shared_ptr<PowderKegComponent> pPowderKegComponent = MakeStrongPtr(pKegActor->GetComponent<PowderKegComponent>());
+            if (!pPowderKegComponent || !pPowderKegComponent->IsThrown())
+            {
+                continue;
+            }
+
+            bool bShouldExplode = false;
+            FixtureType otherFixtureType = FixtureType(reinterpret_cast<std::intptr_t>(pOtherFixture->GetUserData()));
+            if (pOtherFixture->GetBody()->GetUserData() != NULL)
+            {
+                // Explode on enemies' hitboxes, crates and other kegs but not on their agro sensors
+                bShouldExplode = otherFixtureType == FixtureType_EnemyAI ||
+                    otherFixtureType == FixtureType_Crate ||
+                    otherFixtureType == FixtureType_PowderKeg;
+            }
+            else if (pOtherFixture->GetBody()->GetType() == b2_staticBody)
+            {
+                // One-way ground can be passed through from below
+                bShouldExplode = otherFixtureType == FixtureType_Solid ||
+                    otherFixtureType == FixtureType_Death ||
+                    (otherFixtureType == FixtureType_Ground && pKegFixture->GetBody()->GetLinearVelocity().y > 0);
+            }
+
+            if (bShouldExplode)
+            {
+                pPowderKegComponent->OnThrownKegCollided();
             }
         }
     }

@@ -1547,7 +1547,6 @@ namespace ActorTemplates
 
     TiXmlElement* CreateXmlData_PowderKegActor(const std::string& imageSet, const Point& position, int32 damage, int32 zCoord)
     {
-        // TODO: create xml actor prototype and implement lift-throw logic
         TiXmlElement* pActor = new TiXmlElement("Actor");
         pActor->SetAttribute("Type", imageSet.c_str());
 
@@ -1590,10 +1589,12 @@ namespace ActorTemplates
 
         //AddXmlTextElement("ClampToGround", true, pActor->FirstChildElement("PhysicsComponent"));
 
-        pActor->LinkEndChild(CreateAnimationComponent("/LEVEL1/ANIS/POWDERKEG/EXPLODE.ANI", true));
+        pActor->LinkEndChild(CreateAnimationComponent("/LEVEL1/ANIS/POWDERKEG/*", true));
         pActor->LinkEndChild(CreateDestroyableComponent(true, "explode", { SOUND_LEVEL1_KEG_EXPLODE }));
         pActor->LinkEndChild(CreateHealthComponent(1, 1));
         pActor->LinkEndChild(CreateExplodeableComponent(Point(140, 140), damage));
+        // Lets Claw lift, carry and throw the keg
+        pActor->LinkEndChild(new TiXmlElement("PowderKegComponent"));
 
         return pActor;
     }

@@ -235,6 +235,29 @@
             </GeneratedEvent>
         </KeyboardEvent>
         <MenuItem>
+            <!-- Key rebinding is not supported -->
+            <Name>CONTROLS_BUTTON</Name>
+            <Type>Button</Type>
+            <State>Disabled</State>
+            <InactiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/001_CONTROLS.PID</InactiveImage>
+            <ActiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/002_CONTROLS.PID</ActiveImage>
+            <DisabledImage>/MENU_OPTIONS/controls_disabled.png</DisabledImage>
+            <Position x="200" y="135" />
+        </MenuItem>
+        <MenuItem>
+            <Name>DISPLAY_BUTTON</Name>
+            <Type>Button</Type>
+            <Hotkey>E</Hotkey>
+            <State>Active</State>
+            <InactiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/003_DISPLAY.PID</InactiveImage>
+            <ActiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/004_DISPLAY.PID</ActiveImage>
+            <Position x="256" y="170" />
+            <GeneratedEvent>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options_Display</PageName>
+            </GeneratedEvent>
+        </MenuItem>
+        <MenuItem>
             <Name>AUDIO_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>A</Hotkey>
@@ -258,6 +281,104 @@
             <GeneratedEvent>
                 <Type>SwitchPage</Type>
                 <PageName>MenuPage_Main</PageName>
+            </GeneratedEvent>
+        </MenuItem>
+    </MenuPage>
+
+    <!-- DISPLAY PAGE -->
+    <MenuPage>
+        <PageName>MenuPage_Options_Display</PageName>
+        <KeyboardEvent>
+            <KeyType>Escape</KeyType>
+            <GeneratedEvent>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options</PageName>
+            </GeneratedEvent>
+        </KeyboardEvent>
+
+        <MenuItem>
+            <Name>FULLSCREEN_ON_BUTTON</Name>
+            <Type>Button</Type>
+            <Hotkey>P</Hotkey>
+            <State>Active</State>
+            <VisibilityCondition>
+                <ConditionType>FullscreenOn</ConditionType>
+            </VisibilityCondition>
+            <InactiveImage>/MENU_OPTIONS/fullscreen_inactive.png</InactiveImage>
+            <ActiveImage>/MENU_OPTIONS/fullscreen_active.png</ActiveImage>
+            <Position x="185" y="150" />
+            <GeneratedEvent>
+                <Type>ChangeFullscreenEnabled</Type>
+                <IsEnabled>false</IsEnabled>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemVisibility</Type>
+                <MenuItemName>FULLSCREEN_ON_BUTTON</MenuItemName>
+                <IsVisible>false</IsVisible>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemState</Type>
+                <MenuItemName>FULLSCREEN_ON_BUTTON</MenuItemName>
+                <State>Inactive</State>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemVisibility</Type>
+                <MenuItemName>FULLSCREEN_OFF_BUTTON</MenuItemName>
+                <IsVisible>true</IsVisible>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemState</Type>
+                <MenuItemName>FULLSCREEN_OFF_BUTTON</MenuItemName>
+                <State>Active</State>
+            </GeneratedEvent>
+        </MenuItem>
+        <MenuItem>
+            <Name>FULLSCREEN_OFF_BUTTON</Name>
+            <Type>Button</Type>
+            <Hotkey>O</Hotkey>
+            <State>Active</State>
+            <VisibilityCondition>
+                <ConditionType>FullscreenOff</ConditionType>
+            </VisibilityCondition>
+            <InactiveImage>/MENU_OPTIONS/windowed_inactive.png</InactiveImage>
+            <ActiveImage>/MENU_OPTIONS/windowed_active.png</ActiveImage>
+            <Position x="263" y="150" />
+            <GeneratedEvent>
+                <Type>ChangeFullscreenEnabled</Type>
+                <IsEnabled>true</IsEnabled>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemVisibility</Type>
+                <MenuItemName>FULLSCREEN_OFF_BUTTON</MenuItemName>
+                <IsVisible>false</IsVisible>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemState</Type>
+                <MenuItemName>FULLSCREEN_OFF_BUTTON</MenuItemName>
+                <State>Inactive</State>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemVisibility</Type>
+                <MenuItemName>FULLSCREEN_ON_BUTTON</MenuItemName>
+                <IsVisible>true</IsVisible>
+            </GeneratedEvent>
+            <GeneratedEvent>
+                <Type>ModifyMenuItemState</Type>
+                <MenuItemName>FULLSCREEN_ON_BUTTON</MenuItemName>
+                <State>Active</State>
+            </GeneratedEvent>
+        </MenuItem>
+        <MenuItem>
+            <Name>BACK_BUTTON</Name>
+            <Type>Button</Type>
+            <Hotkey>B</Hotkey>
+            <State>Inactive</State>
+            <InactiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/DISPLAY/011_PREVIOUSMENU.PID</InactiveImage>
+            <ActiveImage>/GAME/IMAGES/INGAMEMENU/MAIN/OPTIONS/DISPLAY/012_PREVIOUSMENU.PID</ActiveImage>
+            <Position x="240" y="185" />
+            <GeneratedEvent>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options</PageName>
             </GeneratedEvent>
         </MenuItem>
     </MenuPage>

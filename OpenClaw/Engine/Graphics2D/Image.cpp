@@ -132,7 +132,16 @@ Image* Image::CreatePcxImage(char* rawBuffer, uint32_t size, SDL_Renderer* rende
 
     if (useColorKey)
     {
-        SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format, colorKey.r, colorKey.g, colorKey.b));
+        // Paletted PCX assets mark transparency with palette index 0, whose RGB differs
+        // between game releases (black in some, magenta in e.g. the Polish one)
+        if (pSurface->format->palette != NULL)
+        {
+            SDL_SetColorKey(pSurface, SDL_TRUE, 0);
+        }
+        else
+        {
+            SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format, colorKey.r, colorKey.g, colorKey.b));
+        }
     }
 
     SDL_Texture* pTexture = SDL_CreateTextureFromSurface(renderer, pSurface);

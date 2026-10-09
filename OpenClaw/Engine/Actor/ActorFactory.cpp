@@ -32,6 +32,7 @@
 #include "Components/LootComponent.h"
 #include "Components/DestroyableComponent.h"
 #include "Components/ExplodeableComponent.h"
+#include "Components/PowderKegComponent.h"
 #include "Components/AreaDamageComponent.h"
 #include "Components/GlitterComponent.h"
 #include "Components/CheckpointComponent.h"
@@ -94,6 +95,7 @@ ActorFactory::ActorFactory()
     _componentFactory.Register<LootComponent>(LootComponent::GetIdFromName(LootComponent::g_Name));
     _componentFactory.Register<DestroyableComponent>(DestroyableComponent::GetIdFromName(DestroyableComponent::g_Name));
     _componentFactory.Register<ExplodeableComponent>(ExplodeableComponent::GetIdFromName(ExplodeableComponent::g_Name));
+    _componentFactory.Register<PowderKegComponent>(PowderKegComponent::GetIdFromName(PowderKegComponent::g_Name));
     _componentFactory.Register<AreaDamageComponent>(AreaDamageComponent::GetIdFromName(AreaDamageComponent::g_Name));
     _componentFactory.Register<GlitterComponent>(GlitterComponent::GetIdFromName(GlitterComponent::g_Name));
     _componentFactory.Register<CheckpointComponent>(CheckpointComponent::GetIdFromName(CheckpointComponent::g_Name));

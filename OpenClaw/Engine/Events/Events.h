@@ -2425,6 +2425,40 @@ private:
 };
 
 //---------------------------------------------------------------------------------------------------------------------
+// EventData_Fullscreen_Changed
+//---------------------------------------------------------------------------------------------------------------------
+class EventData_Fullscreen_Changed : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+
+    EventData_Fullscreen_Changed()
+    {
+        m_bIsFullscreen = false;
+    }
+
+    EventData_Fullscreen_Changed(bool isFullscreen)
+    {
+        m_bIsFullscreen = isFullscreen;
+    }
+
+    virtual const EventType& VGetEventType(void) const { return sk_EventType; }
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EventData_Fullscreen_Changed(m_bIsFullscreen));
+    }
+    virtual void VSerialize(std::ostringstream& out) const { out << m_bIsFullscreen; }
+    virtual void VDeserialize(std::istringstream& in) { in >> m_bIsFullscreen; }
+
+    bool GetIsFullscreen() { return m_bIsFullscreen; }
+
+    virtual const char* GetName(void) const { return "EventData_Fullscreen_Changed"; }
+
+private:
+    bool m_bIsFullscreen;
+};
+
+//---------------------------------------------------------------------------------------------------------------------
 // EventData_Enter_Menu
 //---------------------------------------------------------------------------------------------------------------------
 class EventData_Enter_Menu : public BaseEventData
@@ -2443,6 +2477,36 @@ public:
     virtual void VDeserialize(std::istringstream& in) { assert(false && "Cannot be serialized"); }
 
     virtual const char* GetName(void) const { return "EventData_Enter_Menu"; }
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+// EventData_Play_Cutscene - plays given movies one after another, then queues finished event (if any)
+//---------------------------------------------------------------------------------------------------------------------
+class EventData_Play_Cutscene : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+
+    EventData_Play_Cutscene() { }
+    EventData_Play_Cutscene(const std::vector<int>& movies, IEventDataPtr pFinishedEvent)
+        : m_Movies(movies), m_pFinishedEvent(pFinishedEvent) { }
+
+    virtual const EventType& VGetEventType(void) const { return sk_EventType; }
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EventData_Play_Cutscene(m_Movies, m_pFinishedEvent));
+    }
+    virtual void VSerialize(std::ostringstream& out) const { assert(false && "Cannot be serialized"); }
+    virtual void VDeserialize(std::istringstream& in) { assert(false && "Cannot be serialized"); }
+
+    virtual const char* GetName(void) const { return "EventData_Play_Cutscene"; }
+
+    const std::vector<int>& GetMovies() const { return m_Movies; }
+    IEventDataPtr GetFinishedEvent() const { return m_pFinishedEvent; }
+
+private:
+    std::vector<int> m_Movies;
+    IEventDataPtr m_pFinishedEvent;
 };
 
 //---------------------------------------------------------------------------------------------------------------------

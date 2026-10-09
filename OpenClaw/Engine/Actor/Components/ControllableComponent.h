@@ -97,7 +97,9 @@ enum ClawState
     ClawState_Dying,
     ClawState_HoldingRope,
     ClawState_Frozen,
-    ClawState_Idle
+    ClawState_Idle,
+    ClawState_Lifting,
+    ClawState_Throwing
 };
 
 class PositionComponent;
@@ -108,6 +110,7 @@ class AmmoComponent;
 class PowerupComponent;
 class HealthComponent;
 class FollowableComponent;
+class PowderKegComponent;
 class ClawControllableComponent : 
     public ControllableComponent, 
     public AnimationObserver, 
@@ -155,6 +158,7 @@ public:
     virtual bool IsClimbing() override;
 
     bool IsHoldingRope() { return m_State == ClawState_HoldingRope; }
+    bool IsCarryingKeg() { return m_CarriedKegId != INVALID_ACTOR_ID; }
 
     void OnClawKilledEnemy(DamageType killDamageType, Actor* pKilledEnemyActor);
 
@@ -173,12 +177,22 @@ private:
     void SetCurrentPhysicsState();
     bool IsAttackingOrShooting();
 
+    // Powder keg lift / carry / throw
+    bool TryLiftKeg();
+    void ThrowKeg();
+    void DropKeg();
+    shared_ptr<PowderKegComponent> GetCarriedKeg();
+    void UpdateCarriedKegPosition();
+    // Plays given animation, or its carrying variant when Claw carries a keg
+    void SetMovementAnimation(const std::string& animName);
+
     bool m_bIsInBossFight;
 
     int m_TakeDamageDuration;
     int m_TakeDamageTimeLeftMs;
 
     int m_ThrowingTime;
+    int m_CarriedKegId;
 
     ClawState m_State;
     ClawState m_LastState;
