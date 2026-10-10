@@ -39,3 +39,5 @@ Build_Release/MOVIES/
 Build_Release/openclaw
 build/
 side-session-notes/
+Build_Release/config.xml
+Build_Release/SAVES.XML

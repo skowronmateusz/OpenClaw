@@ -59,6 +59,8 @@ Wszystkie te pliki są w `.gitignore`, więc nie trafią przypadkiem do repozyto
 cd Build_Release && ./openclaw
 ```
 
+Przy pierwszym uruchomieniu gra sama tworzy `config.xml` i `SAVES.XML` z szablonów `config.template.xml` i `SAVES.template.XML`. Oba utworzone pliki są w `.gitignore`, więc ustawienia i zapisy gry nie trafiają do repozytorium. Aby wrócić do ustawień domyślnych, wystarczy je usunąć.
+
 ## Sterowanie
 
 | Klawisz | Akcja |

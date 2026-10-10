@@ -11,6 +11,35 @@
 #include <emscripten.h>
 #endif
 
+// Default files shipped with the game. config.xml and SAVES.XML are created
+// from them on the first run, so the user's own copies are never versioned.
+static const char* CONFIG_TEMPLATE_FILE = "config.template.xml";
+static const char* SAVES_TEMPLATE_FILE = "SAVES.template.XML";
+
+static bool FileExists(const std::string& path)
+{
+    std::ifstream f(path.c_str());
+    return f.good();
+}
+
+static bool CopyFileFromTemplate(const std::string& templatePath, const std::string& targetPath)
+{
+    std::ifstream src(templatePath.c_str(), std::ios::binary);
+    if (!src.good())
+    {
+        return false;
+    }
+
+    std::ofstream dst(targetPath.c_str(), std::ios::binary);
+    if (!dst.good())
+    {
+        return false;
+    }
+
+    dst << src.rdbuf();
+    return dst.good();
+}
+
 int RunGameEngine(int argc, char** argv)
 {
     if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH) != 0)
@@ -45,6 +74,13 @@ int RunGameEngine(int argc, char** argv)
         // File was found in a working directory
         userDirectory = "";
     }
+    else if (!FileExists(userDirectory + "config.xml") &&
+             CopyFileFromTemplate(CONFIG_TEMPLATE_FILE, "config.xml"))
+    {
+        // First run - create config in a working directory from the template
+        LOG("Created config.xml from " + std::string(CONFIG_TEMPLATE_FILE));
+        userDirectory = "";
+    }
 
     LOG("Expecting config.xml in path: " + userDirectory + "config.xml");
 
@@ -58,6 +94,18 @@ int RunGameEngine(int argc, char** argv)
     g_pApp->GetGameConfig()->userDirectory = userDirectory;
 
     std::string savesFilePath = g_pApp->GetGameConfig()->userDirectory + g_pApp->GetGameConfig()->savesFile;
+    if (!FileExists(savesFilePath))
+    {
+        if (CopyFileFromTemplate(SAVES_TEMPLATE_FILE, savesFilePath))
+        {
+            LOG("Created " + savesFilePath + " from " + std::string(SAVES_TEMPLATE_FILE));
+        }
+        else
+        {
+            LOG_WARNING("Could not create " + savesFilePath + " from " + std::string(SAVES_TEMPLATE_FILE));
+        }
+    }
+
     LOG("Loaded with:\n\tConfig File: " + userDirectory + "config.xml" + "\n\tSaves File: " + savesFilePath);
 
     // Initialize game instance
