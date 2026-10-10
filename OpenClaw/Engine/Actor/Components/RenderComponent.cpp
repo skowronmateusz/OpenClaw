@@ -688,18 +688,28 @@ bool TilePlaneRenderComponent::VDelegateInit(TiXmlElement* pXmlData)
         return false;
     }
 
+    // Wrapped planes are "infinite". SDL3 (also via sdl2-compat) rejects rects whose
+    // coordinates or size reach INT_MAX / 2 as a potential overflow, so SDL_HasIntersection
+    // would always fail for INT32_MAX and the plane would never be rendered.
+    const int wrappedPlaneSize = 1 << 28;
+
+    // Wrapped axes extend to the negative side too, so a camera left of / above the level origin still sees them
+    int planeX = 0;
+    int planeY = 0;
     int planeWidth = m_PlaneProperties.planePixelWidth;
     int planeHeight = m_PlaneProperties.planePixelHeight * 2;
     if (m_PlaneProperties.isWrappedX)
     {
-        planeWidth = INT32_MAX;
+        planeX = -wrappedPlaneSize / 2;
+        planeWidth = wrappedPlaneSize;
     }
     if (m_PlaneProperties.isWrappedY)
     {
-        planeHeight = INT32_MAX;
+        planeY = -wrappedPlaneSize / 2;
+        planeHeight = wrappedPlaneSize;
     }
-    
-    m_PositionRect = { 0, 0, planeWidth, planeHeight };
+
+    m_PositionRect = { planeX, planeY, planeWidth, planeHeight };
 
     return true;
 }

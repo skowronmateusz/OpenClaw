@@ -1,3 +1,4 @@
+#include <cmath>
 #include <SDL2/SDL.h>
 #include "Scene.h"
 #include "TilePlaneSceneNode.h"
@@ -43,8 +44,9 @@ void SDL2TilePlaneSceneNode::VRender(Scene* pScene)
     float parallaxCameraPosX = (float) cameraRect.x * movementRatioX;
     float parallaxCameraPosY = (float) cameraRect.y * movementRatioY;
 
-    int32_t startCol = (int32_t)(parallaxCameraPosX / tilePixelWidth) - numTilesPadding;
-    int32_t startRow = (int32_t)(parallaxCameraPosY / tilePixelHeight) - numTilesPadding;
+    // floor, so that a camera left of / above the plane origin starts at a negative tile
+    int32_t startCol = (int32_t)std::floor(parallaxCameraPosX / tilePixelWidth) - numTilesPadding;
+    int32_t startRow = (int32_t)std::floor(parallaxCameraPosY / tilePixelHeight) - numTilesPadding;
 
     // We need to add 2 due to startCol/startRow + colTilesToRender/rowTilesToRender float->int casting
     int32_t colTilesToRender = (uint32_t)(cameraRect.w / tilePixelWidth) + 2 + numTilesPadding;
@@ -56,17 +58,19 @@ void SDL2TilePlaneSceneNode::VRender(Scene* pScene)
     int32_t maxTileIdxY = pProperties->tilesOnAxisY;
     int32_t minTileIdxX = 0;
     int32_t minTileIdxY = 0;
-    // TODO: Wrap even when when out of bounds on the negative side
     if (pProperties->isWrappedX)
     {
         maxTileIdxX = INT32_MAX;
-        minTileIdxX = 0;
+        minTileIdxX = INT32_MIN;
     }
     if (pProperties->isWrappedY)
     {
         maxTileIdxY = INT32_MAX;
-        minTileIdxY = 0;
+        minTileIdxY = INT32_MIN;
     }
+
+    // Wrapped tile index, also for negative rows/columns
+    auto wrapIndex = [](int32_t idx, int32_t count) { return ((idx % count) + count) % count; };
 
     int32_t row, col;
     for (row = startRow; row < (startRow + rowTilesToRender) && row <= maxTileIdxY; row++)
@@ -75,7 +79,7 @@ void SDL2TilePlaneSceneNode::VRender(Scene* pScene)
         {
             continue;
         }
-        const int rowTileIndex = row % pProperties->tilesOnAxisY;
+        const int rowTileIndex = wrapIndex(row, pProperties->tilesOnAxisY);
 
         for (col = startCol; col < (startCol + colTilesToRender) && col <= maxTileIdxX; col++)
         {
@@ -84,7 +88,7 @@ void SDL2TilePlaneSceneNode::VRender(Scene* pScene)
             {
                 continue;
             }
-            const int colTileIndex = col % pProperties->tilesOnAxisX;
+            const int colTileIndex = wrapIndex(col, pProperties->tilesOnAxisX);
 
             Image* image = (*pImageList)[rowTileIndex * pProperties->tilesOnAxisX + colTileIndex];
 
