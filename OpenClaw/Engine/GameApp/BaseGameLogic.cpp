@@ -159,12 +159,15 @@ void RenderLoadingScreen(shared_ptr<Image> pBackground, SDL_Rect& renderRect, Po
     SDL_Renderer* pRenderer = g_pApp->GetRenderer();
     SDL_RenderClear(pRenderer);
 
-    SDL_RenderCopy(pRenderer, pBackground->GetTexture(), &renderRect, NULL);
+    // Explicit destination rect - a NULL one is not reliably in logical (scaled) coordinates
+    // with SDL3/sdl2-compat and would draw the background zoomed in by the render scale
+    SDL_RenderCopy(pRenderer, pBackground->GetTexture(), NULL, &renderRect);
 
     // Progress bar
     int progressFullLength = renderRect.w / 2;
     int progressCurrLength = (int)((progressFullLength * progress) / 100.0f);
-    int progressHeight = (int)(30 * scale.x);
+    // renderRect is in logical (already scaled) coordinates
+    int progressHeight = renderRect.h / 32;
     SDL_Rect totalProgressBarRect = { renderRect.w / 4, (int)(renderRect.h * 0.75), progressFullLength, progressHeight };
     SDL_Rect remainingProgressBarRect = { renderRect.w / 4, (int)(renderRect.h * 0.75), progressCurrLength, progressHeight };
 
