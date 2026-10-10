@@ -690,7 +690,8 @@ inline TiXmlElement* WwdObjectToXml(WwdObject* wwdObject, std::string& imagesRoo
     {
         //pActorElem->LinkEndChild(PowderKegToXml(wwdObject));
         SAFE_DELETE(pActorElem);
-        return ActorTemplates::CreateXmlData_PowderKegActor(tmpImageSet, Point(wwdObject->x, wwdObject->y), 50, wwdObject->z);
+        // Original game: keg's damage is 20, OpenClaw deals 2x the original damage to enemies
+        return ActorTemplates::CreateXmlData_PowderKegActor(tmpImageSet, Point(wwdObject->x, wwdObject->y), 40, wwdObject->z);
     }
     else if (logic == "CrabNest")
     {

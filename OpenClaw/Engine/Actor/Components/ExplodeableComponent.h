@@ -25,6 +25,7 @@ private:
     Point m_ExplosionSize;
     int32 m_ExplodingTime;
     int32 m_Damage;
+    int32 m_ClawDamage;
 };
 
 #endif

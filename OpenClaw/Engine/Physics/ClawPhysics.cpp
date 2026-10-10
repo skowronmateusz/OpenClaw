@@ -1222,6 +1222,36 @@ void ClawPhysics::VSetCollisionMask(uint32_t actorId, uint32 collisionMask)
     }
 }
 
+std::vector<std::pair<uint32_t, uint32_t>> ClawPhysics::VGetCollisionFilters(uint32_t actorId)
+{
+    std::vector<std::pair<uint32_t, uint32_t>> filters;
+    if (b2Body* pBody = FindBox2DBody(actorId))
+    {
+        for (b2Fixture* pFixture = pBody->GetFixtureList(); pFixture != NULL; pFixture = pFixture->GetNext())
+        {
+            const b2Filter& filter = pFixture->GetFilterData();
+            filters.push_back(std::make_pair((uint32_t)filter.categoryBits, (uint32_t)filter.maskBits));
+        }
+    }
+
+    return filters;
+}
+
+void ClawPhysics::VSetCollisionFilters(uint32_t actorId, const std::vector<std::pair<uint32_t, uint32_t>>& filters)
+{
+    if (b2Body* pBody = FindBox2DBody(actorId))
+    {
+        size_t fixtureIdx = 0;
+        for (b2Fixture* pFixture = pBody->GetFixtureList(); pFixture != NULL && fixtureIdx < filters.size(); pFixture = pFixture->GetNext(), fixtureIdx++)
+        {
+            b2Filter filter = pFixture->GetFilterData();
+            filter.categoryBits = filters[fixtureIdx].first;
+            filter.maskBits = filters[fixtureIdx].second;
+            pFixture->SetFilterData(filter);
+        }
+    }
+}
+
 SDL_Rect ClawPhysics::VGetAABB(uint32_t actorId, bool discardSensors)
 {
     SDL_Rect aabbRect = { 0, 0, 0, 0 };

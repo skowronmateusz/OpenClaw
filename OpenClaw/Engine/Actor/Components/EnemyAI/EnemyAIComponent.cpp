@@ -24,6 +24,7 @@ EnemyAIComponent::EnemyAIComponent()
     m_bInitialized(false),
     m_bDead(false),
     m_bHasStateLock(true),
+    m_bLifted(false),
     m_TimeSinceLastSpeechSound(0),
     m_MinTimeIntervalForSpeechSound(0)
 {
@@ -217,6 +218,12 @@ void EnemyAIComponent::VOnResistDamage(DamageType damageType, Point impactPoint)
 
 bool EnemyAIComponent::VCanResistDamage(DamageType damageType, Point impactPoint)
 {
+    // Lifted / thrown enemy has no active state and cannot parry
+    if (m_bLifted)
+    {
+        return false;
+    }
+
     if (HasState(EnemyAIState_Parry))
     {
         shared_ptr<ParryEnemyAIStateComponent> pParryStateComponent =
@@ -242,8 +249,35 @@ void EnemyAIComponent::LeaveAllStates(BaseEnemyAIStateComponent* pNextState)
     }
 }
 
+void EnemyAIComponent::SetLifted(bool bLifted)
+{
+    if (bLifted == m_bLifted)
+    {
+        return;
+    }
+
+    if (bLifted)
+    {
+        LeaveAllStates(NULL);
+        m_bLifted = true;
+    }
+    else
+    {
+        m_bLifted = false;
+        if (!m_bDead)
+        {
+            EnterBestState(true);
+        }
+    }
+}
+
 void EnemyAIComponent::EnterState(const std::string &stateName)
 {
+    if (m_bLifted)
+    {
+        return;
+    }
+
     BaseEnemyAIStateComponent* pCurrentState = GetCurrentState();
 
     auto findIt = m_StateMap.find(stateName);
@@ -255,6 +289,11 @@ void EnemyAIComponent::EnterState(const std::string &stateName)
 
 void EnemyAIComponent::EnterState(EnemyAIState state)
 {
+    if (m_bLifted)
+    {
+        return;
+    }
+
     BaseEnemyAIStateComponent* pCurrentState = GetCurrentState();
 
     for (const auto &stateIter : m_StateMap)
@@ -272,6 +311,11 @@ void EnemyAIComponent::EnterState(EnemyAIState state)
 
 void EnemyAIComponent::EnterState(BaseEnemyAIStateComponent* pState)
 {
+    if (m_bLifted)
+    {
+        return;
+    }
+
     assert(pState != NULL);
     BaseEnemyAIStateComponent* pCurrentState = GetCurrentState();
 
@@ -281,12 +325,22 @@ void EnemyAIComponent::EnterState(BaseEnemyAIStateComponent* pState)
 
 void EnemyAIComponent::AcquireStateLock(BaseEnemyAIStateComponent* pNewState)
 {
+    if (m_bLifted)
+    {
+        return;
+    }
+
     LeaveAllStates(pNewState);
     m_bHasStateLock = true;
 }
 
 bool EnemyAIComponent::EnterBestState(bool canForceEnter)
 {
+    if (m_bLifted)
+    {
+        return false;
+    }
+
     BaseEnemyAIStateComponent* pCurrentState = GetCurrentState();
 
     // If some other state has state lock we will not force him to exit.

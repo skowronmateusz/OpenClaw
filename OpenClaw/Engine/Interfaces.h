@@ -587,6 +587,9 @@ public:
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32_t fromFlag, uint32_t toFlag) = 0;
     virtual void VSetCollisionMask(uint32_t actorId, uint32_t collisionMask) = 0;
+    // Collision flag (category) and mask of every fixture of the actor, in fixture order
+    virtual std::vector<std::pair<uint32_t, uint32_t>> VGetCollisionFilters(uint32_t actorId) = 0;
+    virtual void VSetCollisionFilters(uint32_t actorId, const std::vector<std::pair<uint32_t, uint32_t>>& filters) = 0;
 
     virtual void VActivate(uint32_t actorId) = 0;
     virtual void VDeactivate(uint32_t actorId) = 0;

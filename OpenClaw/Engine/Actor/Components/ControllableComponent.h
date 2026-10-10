@@ -110,7 +110,7 @@ class AmmoComponent;
 class PowerupComponent;
 class HealthComponent;
 class FollowableComponent;
-class PowderKegComponent;
+class LiftableComponent;
 class ClawControllableComponent : 
     public ControllableComponent, 
     public AnimationObserver, 
@@ -158,8 +158,8 @@ public:
     virtual bool IsClimbing() override;
 
     bool IsHoldingRope() { return m_State == ClawState_HoldingRope; }
-    bool IsCarryingKeg() { return m_CarriedKegId != INVALID_ACTOR_ID; }
-    // Lift / throw button: lifts powder keg in reach or throws the carried one
+    bool IsCarryingObject() { return m_CarriedActorId != INVALID_ACTOR_ID; }
+    // Lift / throw button: lifts powder keg / enemy in reach or throws the carried one
     void OnLift();
 
     void OnClawKilledEnemy(DamageType killDamageType, Actor* pKilledEnemyActor);
@@ -179,13 +179,13 @@ private:
     void SetCurrentPhysicsState();
     bool IsAttackingOrShooting();
 
-    // Powder keg lift / carry / throw
-    bool TryLiftKeg();
-    void ThrowKeg();
-    void DropKeg();
-    shared_ptr<PowderKegComponent> GetCarriedKeg();
-    void UpdateCarriedKegPosition();
-    // Plays given animation, or its carrying variant when Claw carries a keg
+    // Lift / carry / throw of powder kegs and enemies
+    bool TryLiftObject();
+    void ThrowCarriedObject();
+    void DropCarriedObject();
+    LiftableComponent* GetCarriedObject();
+    void UpdateCarriedObjectPosition();
+    // Plays given animation, or its carrying variant when Claw carries something
     void SetMovementAnimation(const std::string& animName);
 
     bool m_bIsInBossFight;
@@ -194,7 +194,7 @@ private:
     int m_TakeDamageTimeLeftMs;
 
     int m_ThrowingTime;
-    int m_CarriedKegId;
+    int m_CarriedActorId;
 
     ClawState m_State;
     ClawState m_LastState;

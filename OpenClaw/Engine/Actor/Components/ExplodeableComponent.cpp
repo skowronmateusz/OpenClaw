@@ -2,6 +2,7 @@
 #include "../../GameApp/BaseGameApp.h"
 #include "../../GameApp/BaseGameLogic.h"
 #include "PositionComponent.h"
+#include "AreaDamageComponent.h"
 
 #include "../../Events/EventMgr.h"
 #include "../../Events/Events.h"
@@ -14,7 +15,8 @@ ExplodeableComponent::ExplodeableComponent()
     :
     m_ExplosionSize(Point(0, 0)),
     m_ExplodingTime(50),
-    m_Damage(50)
+    m_Damage(50),
+    m_ClawDamage(-1)
 { }
 
 ExplodeableComponent::~ExplodeableComponent()
@@ -39,6 +41,7 @@ bool ExplodeableComponent::VInit(TiXmlElement* pData)
     {
         m_Damage = std::stoi(pElem->GetText());
     }
+    ParseValueFromXmlElem(&m_ClawDamage, pData->FirstChildElement("ClawDamage"));
 
     assert(m_ExplodingTime > 0);
     assert(!m_ExplosionSize.IsZero());
@@ -70,7 +73,7 @@ void ExplodeableComponent::VOnHealthBelowZero(DamageType damageType, int sourceA
     shared_ptr<PositionComponent> pPositionComponent = m_pOwner->GetPositionComponent();
     assert(pPositionComponent);
 
-    ActorTemplates::CreateAreaDamage(
+    StrongActorPtr pExplosion = ActorTemplates::CreateAreaDamage(
         pPositionComponent->GetPosition(), 
         m_ExplosionSize, 
         m_Damage, 
@@ -80,4 +83,12 @@ void ExplodeableComponent::VOnHealthBelowZero(DamageType damageType, int sourceA
         Direction_None, 
         m_pOwner->GetGUID(),
         Point(0, 40));
+
+    if (m_ClawDamage >= 0 && pExplosion)
+    {
+        if (shared_ptr<AreaDamageComponent> pAreaDamage = MakeStrongPtr(pExplosion->GetComponent<AreaDamageComponent>()))
+        {
+            pAreaDamage->SetClawDamage(m_ClawDamage);
+        }
+    }
 }

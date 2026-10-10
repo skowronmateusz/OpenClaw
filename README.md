@@ -1,94 +1,28 @@
-# OpenClaw PL — Kapitan Pazur na macOS
-
-Fork projektu [pjasicek/OpenClaw](https://github.com/pjasicek/OpenClaw) przystosowany do **polskiego wydania gry „Kapitan Pazur”** i budowany natywnie na **macOS (Apple Silicon)**.
-
-Repozytorium nie zawiera danych gry. Do grania potrzebna jest własna kopia polskiej wersji (płyta lub obraz ISO).
-
-## Co zmienia ten fork
-
-- **Grafika:** przezroczystość grafik PCX liczona po indeksie palety, dzięki czemu znika różowe tło pod napisami w polskim menu.
-- **Menu:** polskie napisy są wyśrodkowane według ich rzeczywistej szerokości.
-- **Okno:** okno można dowolnie powiększać; obraz skaluje się z zachowaniem proporcji.
-- **Muzyka:** muzyka MIDI w poziomach gra przez FluidSynth z oryginalnym soundfontem gry.
-- **Opcje:** nowe strony „Ekran” (pełny ekran / okno) i „Poziom trudności”; ustawienia zapisują się w `config.xml`.
-- **Rozgrywka:** podnoszenie, noszenie i rzucanie beczek z prochem.
-- **Filmy:** odtwarzanie oryginalnych filmów (logo, intro, przerywniki między rozdziałami, strona „Odtwórz film”).
-- **Poprawki:** naprawiona awaria ekranu wyników i brakujące dźwięki z polskim `CLAW.REZ`.
-
-## Budowanie na macOS
-
-Wymagane: Xcode Command Line Tools, [Homebrew](https://brew.sh) i CMake.
-
-```bash
-brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx
-```
-
-```bash
-mkdir build && cd build
-cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/include/SDL2" \
-  -DCMAKE_EXE_LINKER_FLAGS="-L/opt/homebrew/lib"
-make -j$(sysctl -n hw.ncpu)
-```
-
-`-DCMAKE_OSX_ARCHITECTURES=arm64` jest ważne, gdy CMake działa pod Rosettą (np. zainstalowany w `/usr/local`) — inaczej budowa idzie pod x86_64 i linker odrzuca biblioteki z Homebrew. Plik wykonywalny trafia do `Build_Release/openclaw`.
-
-## Dane z polskiej płyty
-
-Zamontuj płytę lub obraz ISO (dwuklik w Finderze) i skopiuj do katalogu `Build_Release`:
-
-| Plik na płycie | Cel | Do czego |
-|---|---|---|
-| `DATA/CLAW.REZ` | `Build_Release/CLAW.REZ` | grafika, dźwięki, poziomy (wymagany) |
-| `MUSIC/CLAW4.SF2`, `MUSIC/CLAW.SF2` | `Build_Release/` | brzmienia do muzyki MIDI |
-| `MOVIES/claw.fec` | `Build_Release/CLAW.FEC` | filmy |
-
-Przykład (ścieżkę `/Volumes/...` dopasuj do nazwy zamontowanej płyty):
-
-```bash
-cp "/Volumes/KAPITAN PAZUR/DATA/CLAW.REZ" Build_Release/
-cp "/Volumes/KAPITAN PAZUR/MUSIC/"*.SF2 Build_Release/
-cp "/Volumes/KAPITAN PAZUR/MOVIES/claw.fec" Build_Release/CLAW.FEC
-```
-
-Wszystkie te pliki są w `.gitignore`, więc nie trafią przypadkiem do repozytorium. Filmy można wyłączyć, dopisując do `config.xml` (wewnątrz `<Configuration>`) sekcję `<Movies><PlayMovies>false</PlayMovies></Movies>`.
-
-## Uruchomienie
-
-```bash
-cd Build_Release && ./openclaw
-```
-
-Przy pierwszym uruchomieniu gra sama tworzy `config.xml` i `SAVES.XML` z szablonów `config.template.xml` i `SAVES.template.XML`. Oba utworzone pliki są w `.gitignore`, więc ustawienia i zapisy gry nie trafiają do repozytorium. Aby wrócić do ustawień domyślnych, wystarczy je usunąć.
-
-## Sterowanie
-
-| Klawisz | Akcja |
-|---|---|
-| ← → | ruch |
-| ↑ ↓ | wspinanie; ↓ także kucanie |
-| Spacja | skok |
-| lewy Ctrl | atak; przy beczce: podniesienie / rzut |
-| lewy Option (Alt) | strzał / rzut bronią (przytrzymaj przy dynamicie, żeby rzucić dalej) |
-| lewy Shift | zmiana broni |
-| Esc | menu pauzy |
-| ` | konsola deweloperska |
-
-Działają tylko lewe klawisze Ctrl, Option i Shift. Alternatywny układ (WASD + mysz) włącza `<UseAlternateControls>true</UseAlternateControls>` w `config.xml`.
-
----
-
-*Poniżej oryginalny opis projektu OpenClaw.*
-
 # OpenClaw - Captain Claw (1997) reimplementation
 
  - This project is a multiplatform C++ reimplementation of original Captain Claw (1997) platformer game
  - Whole codebase was written from scratch
  - Game uses assets from original game archive (CLAW.REZ)
+ - This fork is adapted to the **Polish release of the game ("Kapitan Pazur")** and builds natively on **macOS (Apple Silicon)**
+
+The repository does not contain any game data. You need your own copy of the game (for the Polish release: the disc or an ISO image).
+
+Fork of [pjasicek/OpenClaw](https://github.com/pjasicek/OpenClaw).
 
 **Level 1 youtube playthrough:**
 
 [![OpenClaw - Level 1](https://img.youtube.com/vi/ikXQNV_aw68/0.jpg)](https://www.youtube.com/watch?v=ikXQNV_aw68)
+
+# What this fork changes
+
+- **Graphics:** PCX transparency is computed from the palette index, which removes the pink background behind the captions in the Polish menu.
+- **Menu:** Polish captions are centered according to their actual width.
+- **Window:** the window can be freely resized; the image scales while keeping its aspect ratio.
+- **Music:** in-level MIDI music is played through FluidSynth with the game's original soundfont.
+- **Options:** new "Screen" (fullscreen / windowed) and "Difficulty" pages; settings are saved to `config.xml`.
+- **Gameplay:** lifting, carrying and throwing powder kegs and enemies, with rules read from the original `CLAW.EXE` (see [Lifting and throwing](#lifting-and-throwing)).
+- **Movies:** playback of the original movies (logo, intro, chapter cutscenes, "Play movie" page).
+- **Fixes:** fixed a crash on the score screen and missing sounds with the Polish `CLAW.REZ`.
 
 # Build status
 
@@ -114,6 +48,50 @@ Działają tylko lewe klawisze Ctrl, Option i Shift. Alternatywny układ (WASD +
 For all platforms you will need original `CLAW.REZ` game archive in `Build_Release` directory from original game
 
 Zip all content inside `Build_Release/ASSETS` directory to `ASSETS.ZIP` file.
+
+### macOS
+
+Requirements: Xcode Command Line Tools, [Homebrew](https://brew.sh) and CMake.
+
+```bash
+brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx
+```
+
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/include/SDL2" \
+  -DCMAKE_EXE_LINKER_FLAGS="-L/opt/homebrew/lib"
+make -j$(sysctl -n hw.ncpu)
+```
+
+`-DCMAKE_OSX_ARCHITECTURES=arm64` matters when CMake runs under Rosetta (e.g. installed in `/usr/local`) - otherwise the build targets x86_64 and the linker rejects the Homebrew libraries. The executable ends up in `Build_Release/openclaw`.
+
+**Data from the Polish disc.** Mount the disc or ISO image (double-click in Finder) and copy the following to the `Build_Release` directory:
+
+| File on the disc | Destination | Purpose |
+|---|---|---|
+| `DATA/CLAW.REZ` | `Build_Release/CLAW.REZ` | graphics, sounds, levels (required) |
+| `MUSIC/CLAW4.SF2`, `MUSIC/CLAW.SF2` | `Build_Release/` | instruments for the MIDI music |
+| `MOVIES/claw.fec` | `Build_Release/CLAW.FEC` | movies |
+
+Example (adjust the `/Volumes/...` path to the name of the mounted disc):
+
+```bash
+cp "/Volumes/KAPITAN PAZUR/DATA/CLAW.REZ" Build_Release/
+cp "/Volumes/KAPITAN PAZUR/MUSIC/"*.SF2 Build_Release/
+cp "/Volumes/KAPITAN PAZUR/MOVIES/claw.fec" Build_Release/CLAW.FEC
+```
+
+All of these files are in `.gitignore`, so they will not end up in the repository by accident. Movies can be disabled by adding `<Movies><PlayMovies>false</PlayMovies></Movies>` to `config.xml` (inside `<Configuration>`).
+
+**Running:**
+
+```bash
+cd Build_Release && ./openclaw
+```
+
+On first launch the game creates `config.xml` and `SAVES.XML` from the `config.template.xml` and `SAVES.template.XML` templates. Both created files are in `.gitignore`, so your settings and saves do not end up in the repository. To restore the defaults, just delete them.
 
 ### Windows
   - Project contains VS2017 solution with all libraries and include directories preset
@@ -203,7 +181,49 @@ Zip all content inside `Build_Release/ASSETS` directory to `ASSETS.ZIP` file.
     - Contribute to Mozilla and finally close this bug.
     - Use fullscreen mode.
     - Disable default ALT actions in FireFox `about:config` properties.
- 
+
+# Controls
+
+| Key | Action |
+|---|---|
+| ← → | move |
+| ↑ ↓ | climb; ↓ also crouches |
+| Space | jump |
+| left Ctrl | attack; throw when Claw is carrying something |
+| Z | lift a keg / enemy, press again to throw |
+| left Option (Alt) | shoot / throw weapon (hold with dynamite to throw farther) |
+| left Shift | switch weapon |
+| Esc | pause menu |
+| ` | developer console |
+
+Only the left Ctrl, Option and Shift keys work. The alternative layout (WASD + mouse) is enabled with `<UseAlternateControls>true</UseAlternateControls>` in `config.xml`; in it, lifting and throwing is on the Q key.
+
+# Lifting and throwing
+
+Rules reconstructed from the original `CLAW.EXE` (the Polish release from 2000) by analyzing its machine code. Function addresses in the original are given in parentheses.
+
+**Damage scale.** OpenClaw deals 2x more damage to enemies than the original (sword: 5 -> 10, enemy health is scaled accordingly), so the values "against enemies" are doubled. Claw's health (100) and the damage dealt to Claw are the same in both versions.
+
+**What can be lifted**
+- Powder kegs and regular enemies that have `LIFTED`/`LIFTED1`, `LIFTED2` and `THROWN` animations in the game data. Bosses cannot (they have separate combat logic).
+- Claw must be standing on the ground, facing the target and close to it.
+- An enemy cannot be grabbed while jumping or in the middle of a sword swing, nor for 1.5 s after getting up from a throw (`0x44ed11`, flag checked at `0x41ef73`). In the original an enemy leaves the attack state between blows; in OpenClaw it attacks continuously, so the protection covers only the first half of the attack animation.
+- A lifted enemy does not think or attack. Claw can walk and jump with it, but not fight. When hit, crouching, grabbing a rope or stepping onto a ladder, Claw drops what is being carried.
+
+**A thrown enemy**
+- Every enemy (as well as crate or keg) it flies through loses as much health as the thrown enemy's attack strength (`0x44f340` -> `health -= attacker.damage`): 10 for an Officer, i.e. 20 in OpenClaw. The thrown enemy keeps flying.
+- It bounces off the ground twice, each time at 1/3 of the speed (`0x4412b0`, state `LS_BOUNCE`), and stops on the third contact. Hitting a wall kills its forward motion (not verified in the original).
+- It lies there for 0.5 s (`LS_PAUSE`), then loses 4 health (`0x405240`), i.e. 8 in OpenClaw. If health drops to zero it dies; otherwise it gets up and keeps fighting.
+- If it is still in the air 2 s after the throw (e.g. it fell into a pit), it dies.
+
+**Powder keg**
+- Keg damage is 20 (`0x4714c5`), i.e. 40 against enemies in OpenClaw.
+- A thrown keg flies through enemies, dealing each of them that damage, and explodes on hitting the ground (`0x471bb0`). In OpenClaw it also explodes on hitting a wall; this was not verified in the original.
+- It also explodes from any hit: sword, projectile, another explosion (`0x471bf0`).
+- The explosion hurts everything in range: enemies for 40, and Claw for 20 (`0x41e797`).
+
+All values can be changed in the XML of the `LiftableEnemyComponent` and `PowderKegComponent` components.
+
 # In-game images
   -  **TODO** - add screenshots
 
@@ -224,7 +244,3 @@ Zip all content inside `Build_Release/ASSETS` directory to `ASSETS.ZIP` file.
   `~/OpenClaw/Build_Release$ mono ClawLauncher.exe`
  
 -  **TODO** - add screenshots
-
----
-
-*Port na macOS i obsługę polskiej wersji „Kapitan Pazur” ogarnął Claude Opus 5.5 (Anthropic) w Claude Code — od budowania, przez naprawę grafiki, muzyki i menu, po podnoszenie beczek i odtwarzanie filmów — pod okiem Mateusza Skowrona.*

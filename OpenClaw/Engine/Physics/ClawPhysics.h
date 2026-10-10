@@ -61,6 +61,8 @@ public:
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32 fromFlag, uint32 toFlag) override;
     virtual void VSetCollisionMask(uint32_t actorId, uint32 collisionMask) override;
+    virtual std::vector<std::pair<uint32_t, uint32_t>> VGetCollisionFilters(uint32_t actorId) override;
+    virtual void VSetCollisionFilters(uint32_t actorId, const std::vector<std::pair<uint32_t, uint32_t>>& filters) override;
 
     virtual void VActivate(uint32_t actorId) override;
     virtual void VDeactivate(uint32_t actorId) override;
@@ -198,6 +200,8 @@ public:
 
     virtual void VChangeCollisionFlag(uint32_t actorId, uint32 fromFlag, uint32 toFlag) override { }
     virtual void VSetCollisionMask(uint32_t actorId, uint32 collisionMask) override { }
+    virtual std::vector<std::pair<uint32_t, uint32_t>> VGetCollisionFilters(uint32_t actorId) override { return {}; }
+    virtual void VSetCollisionFilters(uint32_t actorId, const std::vector<std::pair<uint32_t, uint32_t>>& filters) override { }
 
     virtual void VActivate(uint32_t actorId) override { }
     virtual void VDeactivate(uint32_t actorId) override { }

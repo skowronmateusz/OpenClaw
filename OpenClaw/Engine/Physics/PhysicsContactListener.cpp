@@ -17,7 +17,7 @@
 #include "../Actor/Components/SpringBoardComponent.h"
 #include "../Actor/Components/ConveyorBeltComponent.h"
 #include "../Actor/Components/AuraComponents/AuraComponent.h"
-#include "../Actor/Components/PowderKegComponent.h"
+#include "../Actor/Components/LiftableComponent.h"
 
 int numFootContacts = 0;
 
@@ -112,6 +112,64 @@ void PhysicsContactListener::BeginContact(b2Contact* pContact)
     b2Fixture* pFixtureA = pContact->GetFixtureA();
     b2Fixture* pFixtureB = pContact->GetFixtureB();
 
+    // Thrown object (powder keg, enemy) contact. Has to be first, one-way ground handling below can return early
+    {
+        b2Fixture* pThrownFixture = pFixtureA;
+        b2Fixture* pOtherFixture = pFixtureB;
+        for (int i = 0; i < 2; i++, std::swap(pThrownFixture, pOtherFixture))
+        {
+            if (pThrownFixture->GetBody()->GetUserData() == NULL)
+            {
+                continue;
+            }
+
+            Actor* pThrownActor = static_cast<Actor*>(pThrownFixture->GetBody()->GetUserData());
+            LiftableComponent* pLiftable = LiftableComponent::GetLiftable(pThrownActor->GetGUID());
+            FixtureType thrownFixtureType = FixtureType(reinterpret_cast<std::intptr_t>(pThrownFixture->GetUserData()));
+            if (pLiftable == NULL || !pLiftable->VIsThrown() || !pLiftable->VIsImpactFixture(thrownFixtureType))
+            {
+                continue;
+            }
+
+            FixtureType otherFixtureType = FixtureType(reinterpret_cast<std::intptr_t>(pOtherFixture->GetUserData()));
+            b2Vec2 thrownVelocity = pThrownFixture->GetBody()->GetLinearVelocity();
+            Point impactVelocity(thrownVelocity.x, thrownVelocity.y);
+            if (pOtherFixture->GetBody()->GetUserData() != NULL)
+            {
+                // Hits enemies' hitboxes, crates and kegs but not their agro sensors
+                Actor* pOtherActor = static_cast<Actor*>(pOtherFixture->GetBody()->GetUserData());
+                if (pOtherActor != pThrownActor &&
+                    (otherFixtureType == FixtureType_EnemyAI ||
+                     otherFixtureType == FixtureType_Crate ||
+                     otherFixtureType == FixtureType_PowderKeg))
+                {
+                    pLiftable->VOnThrownImpact(pOtherActor, false, impactVelocity);
+                }
+            }
+            else if (pOtherFixture->GetBody()->GetType() == b2_staticBody)
+            {
+                // One-way ground can be passed through from below
+                if (otherFixtureType == FixtureType_Ground && thrownVelocity.y > 0)
+                {
+                    pLiftable->VOnThrownImpact(NULL, true, impactVelocity);
+                }
+                else if (otherFixtureType == FixtureType_Solid ||
+                         otherFixtureType == FixtureType_Death)
+                {
+                    // Landed when the tile is below - contact normal points from the thrown object downwards
+                    b2WorldManifold worldManifold;
+                    pContact->GetWorldManifold(&worldManifold);
+                    b2Vec2 normal = worldManifold.normal;
+                    if (pContact->GetFixtureA() != pThrownFixture)
+                    {
+                        normal = -normal;
+                    }
+                    bool bLanded = normal.y > 0.5f;
+                    pLiftable->VOnThrownImpact(NULL, bLanded, impactVelocity);
+                }
+            }
+        }
+    }
     // Foot contact
     {
         // Make it in predictable order
@@ -480,48 +538,6 @@ void PhysicsContactListener::BeginContact(b2Contact* pContact)
                 {
                     pProjectileComponent->OnCollidedWithSolidTile();
                 }
-            }
-        }
-    }
-    // Thrown powder keg contact
-    {
-        b2Fixture* pKegFixture = pFixtureA;
-        b2Fixture* pOtherFixture = pFixtureB;
-        for (int i = 0; i < 2; i++, std::swap(pKegFixture, pOtherFixture))
-        {
-            if (pKegFixture->GetUserData() != (void*)FixtureType_PowderKeg ||
-                pKegFixture->GetBody()->GetUserData() == NULL)
-            {
-                continue;
-            }
-
-            Actor* pKegActor = static_cast<Actor*>(pKegFixture->GetBody()->GetUserData());
-            shared_ptr<PowderKegComponent> pPowderKegComponent = MakeStrongPtr(pKegActor->GetComponent<PowderKegComponent>());
-            if (!pPowderKegComponent || !pPowderKegComponent->IsThrown())
-            {
-                continue;
-            }
-
-            bool bShouldExplode = false;
-            FixtureType otherFixtureType = FixtureType(reinterpret_cast<std::intptr_t>(pOtherFixture->GetUserData()));
-            if (pOtherFixture->GetBody()->GetUserData() != NULL)
-            {
-                // Explode on enemies' hitboxes, crates and other kegs but not on their agro sensors
-                bShouldExplode = otherFixtureType == FixtureType_EnemyAI ||
-                    otherFixtureType == FixtureType_Crate ||
-                    otherFixtureType == FixtureType_PowderKeg;
-            }
-            else if (pOtherFixture->GetBody()->GetType() == b2_staticBody)
-            {
-                // One-way ground can be passed through from below
-                bShouldExplode = otherFixtureType == FixtureType_Solid ||
-                    otherFixtureType == FixtureType_Death ||
-                    (otherFixtureType == FixtureType_Ground && pKegFixture->GetBody()->GetLinearVelocity().y > 0);
-            }
-
-            if (bShouldExplode)
-            {
-                pPowderKegComponent->OnThrownKegCollided();
             }
         }
     }

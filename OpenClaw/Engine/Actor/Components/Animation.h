@@ -51,6 +51,7 @@ public:
     void Pause() { _paused = true; }
     void Resume() { _paused = false; }
     void SetDelay(uint32 delay) { _delay = delay; }
+    bool IsDelayed() const { return _delay > 0; }
 
     void SetReverseAnim(bool reverse) { _reversed = reverse; }
 

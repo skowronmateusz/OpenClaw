@@ -11,6 +11,7 @@ target_sources(openclaw
     ${CMAKE_CURRENT_SOURCE_DIR}/DestroyableComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ExplodeableComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/PowderKegComponent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/LiftableComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/GlitterComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/KinematicComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/LootComponent.h
@@ -31,6 +32,7 @@ target_sources(openclaw
     ${CMAKE_CURRENT_SOURCE_DIR}/DestroyableComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ExplodeableComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PowderKegComponent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/LiftableComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GlitterComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/KinematicComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/LootComponent.cpp

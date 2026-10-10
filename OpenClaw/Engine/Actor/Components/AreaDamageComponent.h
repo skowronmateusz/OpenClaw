@@ -18,12 +18,16 @@ public:
 
     virtual bool VOnApply(Actor* pActorWhoPickedThis);
 
+    // Damage dealt to Claw when it should differ from the damage dealt to everything else
+    void SetClawDamage(int32 clawDamage) { m_ClawDamage = clawDamage; }
+
 protected:
     virtual bool VDelegateInit(TiXmlElement* data);
     virtual void VCreateInheritedXmlElements(TiXmlElement* pBaseElement);
 
 private:
     int32 m_Damage;
+    int32 m_ClawDamage;
     int32 m_Duration;
     Direction m_HitDirection;
     DamageType m_DamageType;

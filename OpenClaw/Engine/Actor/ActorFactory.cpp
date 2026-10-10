@@ -37,6 +37,7 @@
 #include "Components/GlitterComponent.h"
 #include "Components/CheckpointComponent.h"
 #include "Components/EnemyAI/EnemyAIComponent.h"
+#include "Components/EnemyAI/LiftableEnemyComponent.h"
 #include "Components/EnemyAI/EnemyAIStateComponent.h"
 #include "Components/PredefinedMoveComponent.h"
 #include "Components/TriggerComponents/SoundTriggerComponent.h"
@@ -100,6 +101,7 @@ ActorFactory::ActorFactory()
     _componentFactory.Register<GlitterComponent>(GlitterComponent::GetIdFromName(GlitterComponent::g_Name));
     _componentFactory.Register<CheckpointComponent>(CheckpointComponent::GetIdFromName(CheckpointComponent::g_Name));
     _componentFactory.Register<EnemyAIComponent>(EnemyAIComponent::GetIdFromName(EnemyAIComponent::g_Name));
+    _componentFactory.Register<LiftableEnemyComponent>(LiftableEnemyComponent::GetIdFromName(LiftableEnemyComponent::g_Name));
     _componentFactory.Register<PatrolEnemyAIStateComponent>(PatrolEnemyAIStateComponent::GetIdFromName(PatrolEnemyAIStateComponent::g_Name));
     _componentFactory.Register<ParryEnemyAIStateComponent>(ParryEnemyAIStateComponent::GetIdFromName(ParryEnemyAIStateComponent::g_Name));
     _componentFactory.Register<MeleeAttackAIStateComponent>(MeleeAttackAIStateComponent::GetIdFromName(MeleeAttackAIStateComponent::g_Name));

@@ -5,11 +5,14 @@
 #include "../../Events/EventMgr.h"
 #include "../../Events/Events.h"
 
+#include "ControllableComponent.h"
+
 const char* AreaDamageComponent::g_Name = "AreaDamageComponent";
 
 AreaDamageComponent::AreaDamageComponent()
     :
     m_Damage(50),
+    m_ClawDamage(-1),
     m_Duration(50),
     m_ActiveTime(0),
     m_HitDirection(Direction_None),
@@ -94,7 +97,13 @@ bool AreaDamageComponent::VOnApply(Actor* pActorWhoPickedThis)
             }
         }
         
-        pHealthComponent->AddHealth(-m_Damage, m_DamageType, contactPoint, m_SourceActorId);
+        int32 damage = m_Damage;
+        if (m_ClawDamage >= 0 && MakeStrongPtr(pActorWhoPickedThis->GetComponent<ClawControllableComponent>()))
+        {
+            damage = m_ClawDamage;
+        }
+
+        pHealthComponent->AddHealth(-damage, m_DamageType, contactPoint, m_SourceActorId);
     }
 
     return false;

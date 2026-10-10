@@ -11,7 +11,7 @@
 #include "ControllerComponents/HealthComponent.h"
 #include "ControllerComponents/LifeComponent.h"
 #include "FollowableComponent.h"
-#include "PowderKegComponent.h"
+#include "LiftableComponent.h"
 
 #include "../../GameApp/BaseGameApp.h"
 #include "../../GameApp/BaseGameLogic.h"
@@ -87,7 +87,7 @@ ClawControllableComponent::ClawControllableComponent()
     m_TakeDamageTimeLeftMs = 0;
     m_bIsInBossFight = false;
     m_ThrowingTime = 0;
-    m_CarriedKegId = INVALID_ACTOR_ID;
+    m_CarriedActorId = INVALID_ACTOR_ID;
 
     IEventMgr::Get()->VAddListener(MakeDelegate(this, &ClawControllableComponent::BossFightStartedDelegate), EventData_Boss_Fight_Started::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(this, &ClawControllableComponent::BossFightEndedDelegate), EventData_Boss_Fight_Ended::sk_EventType);
@@ -231,7 +231,7 @@ void ClawControllableComponent::VUpdate(uint32 msDiff)
 {
     if ((m_State == ClawState_Standing ||
         m_State == ClawState_Idle) &&
-        !IsCarryingKeg())
+        !IsCarryingObject())
     {
         m_IdleTime += msDiff;
         if (m_IdleTime > g_pApp->GetGlobalOptions()->idleSoundQuoteIntervalMs)
@@ -294,7 +294,7 @@ void ClawControllableComponent::VUpdate(uint32 msDiff)
             double cameraOffsetSpeed = -1.0 * (g_pApp->GetGlobalOptions()->lookUpOrDownSpeed / 1000.0);
             pCamera->AddCameraOffsetY(cameraOffsetSpeed * msDiff);
         }
-        if (!IsCarryingKeg())
+        if (!IsCarryingObject())
         {
             m_pClawAnimationComponent->SetAnimation("lookup");
         }
@@ -382,7 +382,7 @@ void ClawControllableComponent::VUpdate(uint32 msDiff)
         m_ThrowingTime = 0;
     }
 
-    UpdateCarriedKegPosition();
+    UpdateCarriedObjectPosition();
 
     //LOG("State: " + ToStr((int)m_State));
 
@@ -404,7 +404,7 @@ void ClawControllableComponent::VOnStartFalling()
 
 void ClawControllableComponent::VOnLandOnGround(float fromHeight)
 {
-    if (fromHeight > g_pApp->GetGlobalOptions()->clawMinFallHeight && !IsCarryingKeg())
+    if (fromHeight > g_pApp->GetGlobalOptions()->clawMinFallHeight && !IsCarryingObject())
     {
         m_pClawAnimationComponent->SetAnimation("land");
     }
@@ -480,7 +480,7 @@ void ClawControllableComponent::VOnRun()
 void ClawControllableComponent::VOnClimb(bool bIsClimbingUp, bool bIsOnTopEdge)
 {
     // Claw needs both hands to climb
-    DropKeg();
+    DropCarriedObject();
 
     // TODO: Decide whether to keep it
     static bool useAlternativeClimbAnim = true;
@@ -518,10 +518,10 @@ void ClawControllableComponent::VOnStopClimbing()
 
 void ClawControllableComponent::OnAttack()
 {
-    // Claw cannot attack while carrying a keg, attack button throws it instead
-    if (IsCarryingKeg())
+    // Claw cannot attack while carrying something, attack button throws it instead
+    if (IsCarryingObject())
     {
-        ThrowKeg();
+        ThrowCarriedObject();
         return;
     }
 
@@ -600,9 +600,9 @@ void ClawControllableComponent::OnAttack()
 
 void ClawControllableComponent::OnLift()
 {
-    if (IsCarryingKeg())
+    if (IsCarryingObject())
     {
-        ThrowKeg();
+        ThrowCarriedObject();
         return;
     }
 
@@ -612,13 +612,13 @@ void ClawControllableComponent::OnLift()
         return;
     }
 
-    TryLiftKeg();
+    TryLiftObject();
 }
 
 void ClawControllableComponent::OnFire(bool outOfAmmo)
 {
     if (IsAttackingOrShooting() ||
-        IsCarryingKeg() ||
+        IsCarryingObject() ||
         m_State == ClawState_Climbing ||
         m_State == ClawState_Dying || 
         m_State == ClawState_TakingDamage ||
@@ -1036,7 +1036,7 @@ void ClawControllableComponent::VOnAnimationLooped(Animation* pAnimation)
              animName == "ducklift" ||
              animName == "throw")
     {
-        // Keg is above Claw's head / already thrown, continue with (carrying) movement
+        // Carried object is above Claw's head / already thrown, continue with (carrying) movement
         m_State = ClawState_Standing;
         SetCurrentPhysicsState();
     }
@@ -1059,7 +1059,7 @@ bool ClawControllableComponent::IsAttackingOrShooting()
     return false;
 }
 
-bool ClawControllableComponent::TryLiftKeg()
+bool ClawControllableComponent::TryLiftObject()
 {
     if ((m_State != ClawState_Standing &&
         m_State != ClawState_Walking &&
@@ -1072,14 +1072,14 @@ bool ClawControllableComponent::TryLiftKeg()
 
     // TODO: Data drive
     const Point liftReach(70, 60);
-    PowderKegComponent* pKeg = PowderKegComponent::FindLiftableKeg(m_pPositionComponent->GetPosition(), m_Direction, liftReach);
-    if (pKeg == NULL)
+    LiftableComponent* pLiftable = LiftableComponent::FindLiftable(m_pPositionComponent->GetPosition(), m_Direction, liftReach);
+    if (pLiftable == NULL)
     {
         return false;
     }
 
-    pKeg->OnLifted(m_pOwner->GetGUID());
-    m_CarriedKegId = pKeg->GetKegActorId();
+    pLiftable->VOnLifted(m_pOwner->GetGUID());
+    m_CarriedActorId = pLiftable->GetLiftableActorId();
 
     m_pClawAnimationComponent->SetAnimation(IsDucking() ? "ducklift" : "lift");
     m_State = ClawState_Lifting;
@@ -1087,7 +1087,7 @@ bool ClawControllableComponent::TryLiftKeg()
     return true;
 }
 
-void ClawControllableComponent::ThrowKeg()
+void ClawControllableComponent::ThrowCarriedObject()
 {
     if (m_State == ClawState_Lifting ||
         m_State == ClawState_Throwing ||
@@ -1099,15 +1099,15 @@ void ClawControllableComponent::ThrowKeg()
         return;
     }
 
-    shared_ptr<PowderKegComponent> pKeg = GetCarriedKeg();
-    if (!pKeg)
+    LiftableComponent* pLiftable = GetCarriedObject();
+    if (pLiftable == NULL)
     {
         return;
     }
 
-    UpdateCarriedKegPosition();
-    pKeg->OnThrown(m_Direction);
-    m_CarriedKegId = INVALID_ACTOR_ID;
+    UpdateCarriedObjectPosition();
+    pLiftable->VOnThrown(m_Direction);
+    m_CarriedActorId = INVALID_ACTOR_ID;
 
     m_pClawAnimationComponent->SetAnimation("throw");
     // Throwing from the air does not stop Claw's jump / fall
@@ -1117,77 +1117,69 @@ void ClawControllableComponent::ThrowKeg()
     }
 }
 
-void ClawControllableComponent::DropKeg()
+void ClawControllableComponent::DropCarriedObject()
 {
-    if (!IsCarryingKeg())
+    if (!IsCarryingObject())
     {
         return;
     }
 
-    if (shared_ptr<PowderKegComponent> pKeg = GetCarriedKeg())
+    if (LiftableComponent* pLiftable = GetCarriedObject())
     {
-        pKeg->OnDropped();
+        pLiftable->VOnDropped();
     }
-    m_CarriedKegId = INVALID_ACTOR_ID;
+    m_CarriedActorId = INVALID_ACTOR_ID;
 }
 
-shared_ptr<PowderKegComponent> ClawControllableComponent::GetCarriedKeg()
+LiftableComponent* ClawControllableComponent::GetCarriedObject()
 {
-    if (!IsCarryingKeg())
+    if (!IsCarryingObject())
     {
-        return nullptr;
+        return NULL;
     }
 
-    shared_ptr<PowderKegComponent> pKeg;
-    if (StrongActorPtr pKegActor = MakeStrongPtr(g_pApp->GetGameLogic()->VGetActor(m_CarriedKegId)))
+    // Liftables unregister themselves when destroyed
+    LiftableComponent* pLiftable = LiftableComponent::GetLiftable(m_CarriedActorId);
+    if (pLiftable == NULL)
     {
-        pKeg = MakeStrongPtr(pKegActor->GetComponent<PowderKegComponent>());
+        m_CarriedActorId = INVALID_ACTOR_ID;
     }
 
-    if (!pKeg)
-    {
-        m_CarriedKegId = INVALID_ACTOR_ID;
-    }
-
-    return pKeg;
+    return pLiftable;
 }
 
-void ClawControllableComponent::UpdateCarriedKegPosition()
+void ClawControllableComponent::UpdateCarriedObjectPosition()
 {
-    shared_ptr<PowderKegComponent> pKeg = GetCarriedKeg();
-    if (!pKeg)
+    LiftableComponent* pLiftable = GetCarriedObject();
+    if (pLiftable == NULL)
     {
         return;
     }
 
-    // During the first frame of lifting animation Claw only grabs the keg on the ground
+    // During the first frame of lifting animation Claw only grabs the object on the ground
     const std::string animName = m_pClawAnimationComponent->GetCurrentAnimationName();
-    if ((animName == "lift" || animName == "ducklift") &&
-        m_pClawAnimationComponent->GetCurrentAnimation()->IsAtFirstAnimFrame())
-    {
-        return;
-    }
+    bool bAboveHead = !((animName == "lift" || animName == "ducklift") &&
+        m_pClawAnimationComponent->GetCurrentAnimation()->IsAtFirstAnimFrame());
 
-    // Above Claw's head, in his hands. TODO: Data drive
-    Point carryOffset(8, -62);
+    // Above Claw's head, in his hands
+    Point carryOffset = pLiftable->VGetCarryOffset();
     if (m_Direction == Direction_Left)
     {
         carryOffset.x *= -1.0;
     }
 
-    pKeg->SetCarryPosition(m_pPositionComponent->GetPosition() + carryOffset);
-    pKeg->SetLiftedAnimation(true);
+    pLiftable->VSetCarryPosition(m_pPositionComponent->GetPosition() + carryOffset, m_Direction, bAboveHead);
 }
 
 void ClawControllableComponent::SetMovementAnimation(const std::string& animName)
 {
-    if (!IsCarryingKeg())
+    if (!IsCarryingObject())
     {
         m_pClawAnimationComponent->SetAnimation(animName);
         return;
     }
 
-    // There are no carrying variants of jump / fall animations, Claw just holds the keg
+    // There are no carrying variants of jump / fall animations, Claw just holds the carried object
     m_pClawAnimationComponent->SetAnimation(animName == "walk" ? "liftwalk" : "lift2");
 }
 
@@ -1200,7 +1192,7 @@ void ClawControllableComponent::VOnHealthBelowZero(DamageType damageType, int so
 
     IEventMgr::Get()->VQueueEvent(IEventDataPtr(new EventData_Claw_Health_Below_Zero(m_pOwner->GetGUID())));
 
-    DropKeg();
+    DropCarriedObject();
 
     // TODO: Track how exactly claw died
     if (m_pClawAnimationComponent->GetCurrentAnimationName() != "spikedeath")
@@ -1256,8 +1248,8 @@ void ClawControllableComponent::VOnHealthChanged(int32 oldHealth, int32 newHealt
     // When claw takes damage but does not actually die
     if (oldHealth > newHealth)
     {
-        // Getting hit makes Claw drop carried keg
-        DropKeg();
+        // Getting hit makes Claw drop carried object
+        DropCarriedObject();
 
         // When Claw is holding rope his animation does not change
         if (m_State != ClawState_HoldingRope)
@@ -1320,8 +1312,8 @@ bool ClawControllableComponent::IsDucking()
 
 void ClawControllableComponent::OnDuck()
 {
-    // Ducking puts the carried keg down
-    DropKeg();
+    // Ducking puts the carried object down
+    DropCarriedObject();
 
     if (!IsDucking())
     {
@@ -1344,7 +1336,7 @@ bool ClawControllableComponent::IsClimbing()
 
 void ClawControllableComponent::VOnAttachedToRope()
 {
-    DropKeg();
+    DropCarriedObject();
 
     m_pClawAnimationComponent->SetAnimation("swing");
     m_pPhysicsComponent->SetGravityScale(0.0f);

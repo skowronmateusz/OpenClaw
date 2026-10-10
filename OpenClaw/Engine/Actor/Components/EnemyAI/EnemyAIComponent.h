@@ -51,6 +51,11 @@ public:
 
     BaseEnemyAIStateComponent* GetCurrentState();
 
+    // While lifted by Claw the enemy does not think at all, no state can be entered
+    void SetLifted(bool bLifted);
+    bool IsLifted() const { return m_bLifted; }
+    bool IsDead() const { return m_bDead; }
+
 private:
     void LeaveAllStates(BaseEnemyAIStateComponent* pNextState);
     bool HasState(const std::string &stateName);
@@ -64,6 +69,7 @@ private:
     bool m_bInitialized;
     bool m_bDead;
     bool m_bHasStateLock;
+    bool m_bLifted;
     EnemyStateMap m_StateMap;
 
     int m_TimeSinceLastSpeechSound;
