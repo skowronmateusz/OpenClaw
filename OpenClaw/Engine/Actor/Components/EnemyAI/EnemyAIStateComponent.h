@@ -118,6 +118,7 @@ public:
 
 protected:
     bool IsActorWithinLOS(Actor* pActor);
+    bool IsVisibleOnScreen();
 
     bool m_IsActive;
     int m_StatePriority;

@@ -13,6 +13,8 @@
 
 #include "../../../Events/EventMgr.h"
 #include "../../../Events/Events.h"
+#include "../../../UserInterface/HumanView.h"
+#include "../../../Scene/SceneNodes.h"
 
 #include <time.h>
 
@@ -160,6 +162,21 @@ bool BaseEnemyAIStateComponent::IsActorWithinLOS(Actor* pActor)
     }
 
     return true;
+}
+
+// Like in the original game, enemies only attack once they are on screen, so that their
+// fixed-size agro sensors don't let them attack from outside of the view
+bool BaseEnemyAIStateComponent::IsVisibleOnScreen()
+{
+    HumanView* pHumanView = g_pApp->GetHumanView();
+    if (pHumanView == NULL || !pHumanView->GetCamera() || m_pRenderComponent == NULL)
+    {
+        return true;
+    }
+
+    SDL_Rect cameraRect = pHumanView->GetCamera()->GetCameraRect();
+    SDL_Rect renderRect = m_pRenderComponent->VGetPositionRect();
+    return SDL_HasIntersection(&renderRect, &cameraRect) == SDL_TRUE;
 }
 
 //=====================================================================================================================
@@ -1178,6 +1195,11 @@ bool BaseAttackAIStateComponent::VCanEnter()
         return false;
     }
 
+    if (!IsVisibleOnScreen())
+    {
+        return false;
+    }
+
     // TODO: Only Claw is the enemy at the moment, if the need to have more enemies arises, this needs to be changed
     // Since the first found actor is picked
 
@@ -1409,6 +1431,11 @@ void DuckRangedAttackAIStateComponent::VOnAttackFrame(std::shared_ptr<EnemyAttac
 bool DuckRangedAttackAIStateComponent::VCanEnter()
 {
     if (m_EnemyAgroList.empty())
+    {
+        return false;
+    }
+
+    if (!IsVisibleOnScreen())
     {
         return false;
     }
