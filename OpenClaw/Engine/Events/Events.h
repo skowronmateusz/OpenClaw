@@ -1274,6 +1274,58 @@ private:
 };
 
 //---------------------------------------------------------------------------------------------------------------------
+// EventData_Actor_Lift - Sent when lift / throw button is pressed.
+//---------------------------------------------------------------------------------------------------------------------
+class EventData_Actor_Lift : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+
+    EventData_Actor_Lift(void)
+    {
+        m_ActorId = INVALID_ACTOR_ID;
+    }
+
+    EventData_Actor_Lift(uint32 actorId)
+    {
+        m_ActorId = actorId;
+    }
+
+    virtual const EventType& VGetEventType(void) const
+    {
+        return sk_EventType;
+    }
+
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EventData_Actor_Lift(m_ActorId));
+    }
+
+    virtual void VSerialize(std::ostringstream& out) const
+    {
+        out << m_ActorId;
+    }
+
+    virtual void VDeserialize(std::istringstream& in)
+    {
+        in >> m_ActorId;
+    }
+
+    uint32 GetActorId(void) const
+    {
+        return m_ActorId;
+    }
+
+    virtual const char* GetName(void) const
+    {
+        return "EventData_Actor_Lift";
+    }
+
+private:
+    uint32 m_ActorId;
+};
+
+//---------------------------------------------------------------------------------------------------------------------
 // EventData_New_HUD_Element
 //---------------------------------------------------------------------------------------------------------------------
 class EventData_New_HUD_Element : public BaseEventData

@@ -55,6 +55,7 @@ void ClawGameLogic::RegisterAllDelegates()
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::ActorFireDelegate), EventData_Actor_Fire::sk_EventType);
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::ActorFireEndedDelegate), EventData_Actor_Fire_Ended::sk_EventType);
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::ActorAttackDelegate), EventData_Actor_Attack::sk_EventType);
+    pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::ActorLiftDelegate), EventData_Actor_Lift::sk_EventType);
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::NewLifeDelegate), EventData_New_Life::sk_EventType);
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::TeleportActorDelegate), EventData_Teleport_Actor::sk_EventType);
     pGlobalEventManager->VAddListener(MakeDelegate(this, &ClawGameLogic::RequestChangeAmmoTypeDelegate), EventData_Request_Change_Ammo_Type::sk_EventType);
@@ -73,6 +74,7 @@ void ClawGameLogic::RemoveAllDelegates()
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::ActorFireDelegate), EventData_Actor_Fire::sk_EventType);
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::ActorFireEndedDelegate), EventData_Actor_Fire_Ended::sk_EventType);
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::ActorAttackDelegate), EventData_Actor_Attack::sk_EventType);
+    pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::ActorLiftDelegate), EventData_Actor_Lift::sk_EventType);
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::NewLifeDelegate), EventData_New_Life::sk_EventType);
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::TeleportActorDelegate), EventData_Teleport_Actor::sk_EventType);
     pGlobalEventManager->VRemoveListener(MakeDelegate(this, &ClawGameLogic::RequestChangeAmmoTypeDelegate), EventData_Request_Change_Ammo_Type::sk_EventType);
@@ -199,6 +201,25 @@ void ClawGameLogic::ActorAttackDelegate(IEventDataPtr pEventData)
         return;
     }
     pControllableComponent->OnAttack();
+}
+
+void ClawGameLogic::ActorLiftDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EventData_Actor_Lift> pCastEventData = static_pointer_cast<EventData_Actor_Lift>(pEventData);
+
+    StrongActorPtr pActor = MakeStrongPtr(VGetActor(pCastEventData->GetActorId()));
+    if (!pActor)
+    {
+        return;
+    }
+
+    shared_ptr<ClawControllableComponent> pControllableComponent =
+        MakeStrongPtr(pActor->GetComponent<ClawControllableComponent>(ClawControllableComponent::g_Name));
+    if (!pControllableComponent)
+    {
+        return;
+    }
+    pControllableComponent->OnLift();
 }
 
 void ClawGameLogic::NewLifeDelegate(IEventDataPtr pEventData)

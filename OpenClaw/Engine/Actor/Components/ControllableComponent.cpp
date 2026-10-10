@@ -518,7 +518,7 @@ void ClawControllableComponent::VOnStopClimbing()
 
 void ClawControllableComponent::OnAttack()
 {
-    // Attack button throws carried keg
+    // Claw cannot attack while carrying a keg, attack button throws it instead
     if (IsCarryingKeg())
     {
         ThrowKeg();
@@ -532,12 +532,6 @@ void ClawControllableComponent::OnAttack()
         m_State == ClawState_Dying ||
         m_State == ClawState_HoldingRope ||
         m_bFrozen)
-    {
-        return;
-    }
-
-    // ... and when there is a keg in reach Claw lifts it instead of swinging his sword
-    if (TryLiftKeg())
     {
         return;
     }
@@ -602,6 +596,23 @@ void ClawControllableComponent::OnAttack()
         IEventMgr::Get()->VTriggerEvent(IEventDataPtr(
             new EventData_Request_Play_Sound(soundInfo)));
     }
+}
+
+void ClawControllableComponent::OnLift()
+{
+    if (IsCarryingKeg())
+    {
+        ThrowKeg();
+        return;
+    }
+
+    if (IsAttackingOrShooting() ||
+        m_bFrozen)
+    {
+        return;
+    }
+
+    TryLiftKeg();
 }
 
 void ClawControllableComponent::OnFire(bool outOfAmmo)
@@ -1060,7 +1071,7 @@ bool ClawControllableComponent::TryLiftKeg()
     }
 
     // TODO: Data drive
-    const Point liftReach(70, 80);
+    const Point liftReach(70, 60);
     PowderKegComponent* pKeg = PowderKegComponent::FindLiftableKeg(m_pPositionComponent->GetPosition(), m_Direction, liftReach);
     if (pKeg == NULL)
     {

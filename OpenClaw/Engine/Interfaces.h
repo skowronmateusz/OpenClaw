@@ -32,6 +32,7 @@ enum ActionType
 {
     ActionType_Fire,
     ActionType_Attack,
+    ActionType_Lift,
     ActionType_Change_Ammo_Type
 };
 

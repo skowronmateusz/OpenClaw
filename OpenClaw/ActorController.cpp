@@ -40,6 +40,12 @@ void ActorController::HandleAction(ActionType actionType)
             IEventMgr::Get()->VTriggerEvent(pClimbEvent);
             break;
         }
+        case ActionType_Lift:
+        {
+            shared_ptr<EventData_Actor_Lift> pEvent(new EventData_Actor_Lift(m_pControlledObject->VGetProperties()->GetActorId()));
+            IEventMgr::Get()->VTriggerEvent(pEvent);
+            break;
+        }
         case ActionType_Change_Ammo_Type:
         {
             shared_ptr<EventData_Request_Change_Ammo_Type> pEvent(new EventData_Request_Change_Ammo_Type(m_pControlledObject->VGetProperties()->GetActorId()));
@@ -139,6 +145,11 @@ bool ActorController::VOnKeyDown(SDL_Keycode key)
             HandleAction(ActionType_Change_Ammo_Type);
             return true;
         }
+        else if (key == SDLK_q)
+        {
+            HandleAction(ActionType_Lift);
+            return true;
+        }
         else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LSHIFT)
         {
             HandleAction(ActionType_Change_Ammo_Type);
@@ -155,6 +166,11 @@ bool ActorController::VOnKeyDown(SDL_Keycode key)
         else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LCTRL)
         {
             HandleAction(ActionType_Attack);
+            return true;
+        }
+        else if (key == SDLK_z)
+        {
+            HandleAction(ActionType_Lift);
             return true;
         }
         else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LSHIFT)

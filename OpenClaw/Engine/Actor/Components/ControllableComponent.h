@@ -159,6 +159,8 @@ public:
 
     bool IsHoldingRope() { return m_State == ClawState_HoldingRope; }
     bool IsCarryingKeg() { return m_CarriedKegId != INVALID_ACTOR_ID; }
+    // Lift / throw button: lifts powder keg in reach or throws the carried one
+    void OnLift();
 
     void OnClawKilledEnemy(DamageType killDamageType, Actor* pKilledEnemyActor);
 

@@ -21,6 +21,7 @@ public:
     void ActorFireDelegate(IEventDataPtr pEventData);
     void ActorFireEndedDelegate(IEventDataPtr pEventData);
     void ActorAttackDelegate(IEventDataPtr pEventData);
+    void ActorLiftDelegate(IEventDataPtr pEventData);
     void NewLifeDelegate(IEventDataPtr pEventData);
     void TeleportActorDelegate(IEventDataPtr pEventData);
     void RequestChangeAmmoTypeDelegate(IEventDataPtr pEventData);

@@ -24,6 +24,7 @@ const EventType EventData_Collideable_Tile_Created::sk_EventType(0x8cac18ee);
 const EventType EventData_Start_Climb::sk_EventType(0x8bab18ee);
 const EventType EventData_Actor_Fire::sk_EventType(0x123418ee);
 const EventType EventData_Actor_Attack::sk_EventType(0x567818ee);
+const EventType EventData_Actor_Lift::sk_EventType(0x7a3c19e2);
 const EventType EventData_New_HUD_Element::sk_EventType(0x5678abce);
 const EventType EventData_New_Life::sk_EventType(0x4b83b7fb);
 const EventType EventData_Updated_Score::sk_EventType(0x5a1f78ce);
