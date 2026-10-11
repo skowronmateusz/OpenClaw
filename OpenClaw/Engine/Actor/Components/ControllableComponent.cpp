@@ -982,9 +982,16 @@ void ClawControllableComponent::VOnAnimationFrameChanged(Animation* pAnimation, 
                     damage *= 2;
                 }
 
+                // Hit area reaches from Claw's center to the tip of the swing. Crates do not block
+                // Claw, so a crate he walked into would otherwise be in the gap in front of him
+                const Point meleeSize(fabs(positionOffset.x) + 25, 25);
+                Point meleePosition = m_pPositionComponent->GetPosition();
+                meleePosition.x += (m_Direction == Direction_Left ? -1.0 : 1.0) * meleeSize.x / 2;
+                meleePosition.y = position.y;
+
                 ActorTemplates::CreateAreaDamage(
-                    position,
-                    Point(50, 25),
+                    meleePosition,
+                    meleeSize,
                     damage,
                     CollisionFlag_ClawAttack,
                     "Rectangle",
