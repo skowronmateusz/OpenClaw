@@ -9,6 +9,7 @@
 #include "../UserInterface/Console.h"
 #include "CommandHandler.h"
 #include "../UserInterface/Touch/TouchManager.h"
+#include "../UserInterface/KeyBindings.h"
 
 const int DEFAULT_SCREEN_WIDTH = 1280;
 const int DEFAULT_SCREEN_HEIGHT = 768;
@@ -188,6 +189,8 @@ struct ControlOptions
         touchScreen.timeThreshold = 100;
     }
     bool useAlternateControls;
+    // Defaults depend on useAlternateControls, keys from config.xml override them
+    KeyBindings keyBindings;
     struct {
         bool enable;
         float distanceThreshold;
@@ -311,6 +314,7 @@ public:
     GameOptions* GetGameConfig() { return &m_GameOptions; }
     const GlobalOptions* GetGlobalOptions() const { return &m_GlobalOptions; }
     const ControlOptions* GetControlOptions() const { return &m_ControlOptions; }
+    KeyBindings* GetKeyBindings() { return &m_ControlOptions.keyBindings; }
     const DebugOptions* GetDebugOptions() const { return &m_DebugOptions; }
 
     TiXmlElement* GetActorPrototypeElem(ActorPrototype proto);

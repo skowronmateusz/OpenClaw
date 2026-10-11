@@ -105,6 +105,8 @@ std::map<std::string, MenuItemType> g_StringToMenuItemType =
     { "Button",     MenuItemType_Button },
     { "Slider",     MenuItemType_Slider },
     { "Image",      MenuItemType_Image },
+    { "TextButton", MenuItemType_TextButton },
+    { "KeyBinding", MenuItemType_KeyBinding },
 };
 
 static SDL_Rect GetScreenRect()
@@ -294,6 +296,10 @@ static IEventDataPtr XmlElemToGeneratedEvent(TiXmlElement* pElem)
     {
         pEventData.reset(new EventData_Show_Message("NotImplemented"));
     }
+    else if (eventType == "RestoreDefaultKeyBindings")
+    {
+        pEventData.reset(new EventData_Restore_Default_Key_Bindings());
+    }
     else if (eventType == "QuitGame")
     {
         pEventData.reset(new EventData_Quit_Game());
@@ -395,6 +401,75 @@ Point g_MenuScale = Point(1.0, 1.0);
 // Menu items are laid out in the original 640x480 menu space
 static const int MENU_WIDTH = 640;
 static const double MENU_CENTERING_TOLERANCE = 100.0;
+
+// Height of text menu items in the 640x480 menu space
+static const int MENU_TEXT_FONT_SIZE = 15;
+static const SDL_Color MENU_TEXT_COLOR_INACTIVE = { 210, 200, 180, 255 };
+static const SDL_Color MENU_TEXT_COLOR_ACTIVE = { 255, 210, 40, 255 };
+static const SDL_Color MENU_TEXT_COLOR_CAPTURING = { 255, 90, 60, 255 };
+
+// Console font opened at the size of text menu items on the screen, so the text is not
+// blurry from scaling. Reopened when the menu scale changes.
+static TTF_Font* GetMenuTextFont()
+{
+    static TTF_Font* s_pFont = NULL;
+    static int s_FontSize = 0;
+
+    int fontSize = max(1, (int)(MENU_TEXT_FONT_SIZE * g_MenuScale.y + 0.5));
+    if (s_pFont != NULL && s_FontSize == fontSize)
+    {
+        return s_pFont;
+    }
+
+    // Previous font is not closed - menu items compare font pointers to find out that their
+    // textures are outdated and a reopened font could get the same address. Scale rarely changes.
+    s_pFont = TTF_OpenFont(g_pApp->GetGameConfig()->consoleFontName.c_str(), fontSize);
+    s_FontSize = fontSize;
+    if (s_pFont == NULL)
+    {
+        LOG_ERROR("Failed to open menu font: " + std::string(TTF_GetError()));
+        // Fallback, scaled up
+        return g_pApp->GetConsoleFont();
+    }
+
+    return s_pFont;
+}
+
+// Renders white text which is colored by texture color modulation
+static SDL_Texture* CreateMenuTextTexture(SDL_Renderer* pRenderer, const std::string& text)
+{
+    TTF_Font* pFont = GetMenuTextFont();
+    if (pFont == NULL || text.empty())
+    {
+        return NULL;
+    }
+
+    SDL_Surface* pSurface = TTF_RenderUTF8_Blended(pFont, text.c_str(), { 255, 255, 255, 255 });
+    if (pSurface == NULL)
+    {
+        LOG_WARNING("Failed to render menu text: " + text);
+        return NULL;
+    }
+
+    SDL_Texture* pTexture = SDL_CreateTextureFromSurface(pRenderer, pSurface);
+    SDL_FreeSurface(pSurface);
+
+    return pTexture;
+}
+
+// Size of the texture in the 640x480 menu space
+static Point GetMenuTextSize(SDL_Texture* pTexture)
+{
+    if (pTexture == NULL)
+    {
+        return Point(0, MENU_TEXT_FONT_SIZE);
+    }
+
+    int width, height;
+    SDL_QueryTexture(pTexture, NULL, NULL, &width, &height);
+
+    return Point(width / g_MenuScale.x, height / g_MenuScale.y);
+}
 
 //-----------------------------------------------------------------------------
 //
@@ -730,6 +805,14 @@ void ScreenElementMenuPage::VOnRender(uint32 msDiff)
 
 bool ScreenElementMenuPage::VOnEvent(SDL_Event& evt)
 {
+    // Key binding item waiting for a new key gets everything, so that e.g. arrows or hotkeys
+    // can be bound instead of moving in the menu
+    shared_ptr<ScreenElementMenuItem> pCapturingItem = GetActiveMenuItem();
+    if (pCapturingItem && pCapturingItem->IsCapturingKey())
+    {
+        return pCapturingItem->VOnEvent(evt);
+    }
+
     int activeMenuItemIdx = GetActiveMenuItemIdx();
     if (m_MenuItems.size() > 0)
     {
@@ -966,6 +1049,11 @@ bool ScreenElementMenuPage::MoveToMenuItemIdx(int oldIdx, int idxIncrement, bool
 
 void ScreenElementMenuPage::OnPageLoaded()
 {
+    for (shared_ptr<ScreenElementMenuItem> pMenuItem : m_MenuItems)
+    {
+        pMenuItem->StopCapturingKey();
+    }
+
     // Focus on first active button
     MoveToMenuItemIdx(m_MenuItems.size() - 1, 1, false);
 }
@@ -995,18 +1083,38 @@ ScreenElementMenuItem::ScreenElementMenuItem(SDL_Renderer* pRenderer)
     m_State(MenuItemState_None),
     m_Hotkey(SDL_SCANCODE_UNKNOWN),
     m_bVisible(true),
-    m_bCenterHorizontally(false)
+    m_bCenterHorizontally(false),
+    m_Type(MenuItemType_None),
+    m_KeyBindingAction(KeyBindingAction_None),
+    m_KeyColumnX(0),
+    m_bCapturingKey(false),
+    m_CaptureTimeMs(0),
+    m_pTextTexture(NULL),
+    m_pValueTexture(NULL),
+    m_pTexturesFont(NULL)
 {
 
 }
 
 ScreenElementMenuItem::~ScreenElementMenuItem()
 {
-
+    if (m_pTextTexture)
+    {
+        SDL_DestroyTexture(m_pTextTexture);
+    }
+    if (m_pValueTexture)
+    {
+        SDL_DestroyTexture(m_pValueTexture);
+    }
 }
 
 void ScreenElementMenuItem::VOnUpdate(uint32 msDiff)
 {
+    if (m_bCapturingKey)
+    {
+        m_CaptureTimeMs += msDiff;
+    }
+
     // This is a bit hacky but implementing this via XML would be pain in the ass right now...
     if (m_Name == "SOUND_KNOB")
     {
@@ -1020,8 +1128,103 @@ void ScreenElementMenuItem::VOnUpdate(uint32 msDiff)
     }
 }
 
+std::string ScreenElementMenuItem::GetValueText() const
+{
+    if (m_Type != MenuItemType_KeyBinding)
+    {
+        return "";
+    }
+
+    if (m_bCapturingKey)
+    {
+        return g_pApp->GetGameDataLanguage() == "pl" ? "Nacisnij klawisz..." : "Press a key...";
+    }
+
+    return KeyBindings::GetKeyCaption(g_pApp->GetKeyBindings()->GetKey(m_KeyBindingAction));
+}
+
+int ScreenElementMenuItem::GetTextX() const
+{
+    // Text buttons are centered in the menu
+    if (m_Type == MenuItemType_TextButton)
+    {
+        return (int)((MENU_WIDTH - GetMenuTextSize(m_pTextTexture).x) / 2);
+    }
+
+    return (int)m_Position.x;
+}
+
+void ScreenElementMenuItem::RenderText(SDL_Texture* pTexture, int x, int y, SDL_Color color)
+{
+    if (pTexture == NULL)
+    {
+        return;
+    }
+
+    Point size = GetMenuTextSize(pTexture);
+    SDL_Rect renderRect;
+    renderRect.x = (int)(x * g_MenuScale.x);
+    renderRect.y = (int)(y * g_MenuScale.y);
+    renderRect.w = (int)(size.x * g_MenuScale.x);
+    renderRect.h = (int)(size.y * g_MenuScale.y);
+
+    // Shadow for readability on the menu backgrounds
+    SDL_Rect shadowRect = renderRect;
+    shadowRect.x += (int)g_MenuScale.x;
+    shadowRect.y += (int)g_MenuScale.y;
+    SDL_SetTextureColorMod(pTexture, 0, 0, 0);
+    SDL_RenderCopy(m_pRenderer, pTexture, NULL, &shadowRect);
+
+    SDL_SetTextureColorMod(pTexture, color.r, color.g, color.b);
+    SDL_RenderCopy(m_pRenderer, pTexture, NULL, &renderRect);
+}
+
 void ScreenElementMenuItem::VOnRender(uint32 msDiff)
 {
+    if (IsTextItem())
+    {
+        // Textures are recreated when the text or the menu scale (font size) changes
+        TTF_Font* pFont = GetMenuTextFont();
+        const bool hasFontChanged = pFont != m_pTexturesFont;
+        if (m_pTextTexture == NULL || hasFontChanged)
+        {
+            if (m_pTextTexture)
+            {
+                SDL_DestroyTexture(m_pTextTexture);
+            }
+            m_pTextTexture = CreateMenuTextTexture(m_pRenderer, m_Text);
+            m_ValueTextureText.clear();
+        }
+
+        std::string valueText = GetValueText();
+        if (valueText != m_ValueTextureText || hasFontChanged)
+        {
+            if (m_pValueTexture)
+            {
+                SDL_DestroyTexture(m_pValueTexture);
+            }
+            m_pValueTexture = CreateMenuTextTexture(m_pRenderer, valueText);
+            m_ValueTextureText = valueText;
+        }
+        m_pTexturesFont = pFont;
+
+        SDL_Color color = m_State == MenuItemState_Active ? MENU_TEXT_COLOR_ACTIVE : MENU_TEXT_COLOR_INACTIVE;
+        RenderText(m_pTextTexture, GetTextX(), (int)m_Position.y, color);
+
+        if (m_Type == MenuItemType_KeyBinding)
+        {
+            // Blinking while waiting for a key
+            bool isBlinkVisible = !m_bCapturingKey || (m_CaptureTimeMs / 400) % 2 == 0;
+            if (isBlinkVisible)
+            {
+                RenderText(m_pValueTexture, m_KeyColumnX, (int)m_Position.y,
+                    m_bCapturingKey ? MENU_TEXT_COLOR_CAPTURING : color);
+            }
+        }
+
+        return;
+    }
+
     shared_ptr<Image> pCurrImage = m_Images[m_State];
     if (pCurrImage == nullptr)
     {
@@ -1038,8 +1241,58 @@ void ScreenElementMenuItem::VOnRender(uint32 msDiff)
     SDL_RenderCopy(m_pRenderer, pCurrImage->GetTexture(), NULL, &renderRect);
 }
 
+bool ScreenElementMenuItem::OnCapturedKeyEvent(SDL_Event& evt)
+{
+    if (evt.type == SDL_MOUSEBUTTONDOWN)
+    {
+        m_bCapturingKey = false;
+        return true;
+    }
+
+    // Key releases are not eaten, held game keys would get stuck otherwise
+    if (evt.type != SDL_KEYDOWN)
+    {
+        return false;
+    }
+
+    if (evt.key.repeat != 0)
+    {
+        return true;
+    }
+
+    // Same conversion as the game controller uses
+    SDL_Scancode key = SDL_GetScancodeFromKey(evt.key.keysym.sym);
+    if (key == SDL_SCANCODE_ESCAPE)
+    {
+        // Cancel, keep the previous key
+        m_bCapturingKey = false;
+        return true;
+    }
+
+    if (!KeyBindings::IsKeyBindable(key))
+    {
+        // Wait for some other key
+        return true;
+    }
+
+    m_bCapturingKey = false;
+    g_pApp->GetKeyBindings()->SetKey(m_KeyBindingAction, key);
+    g_pApp->SaveGameOptions();
+
+    SoundInfo soundInfo(SOUND_MENU_SELECT_MENU_ITEM);
+    IEventMgr::Get()->VTriggerEvent(IEventDataPtr(
+        new EventData_Request_Play_Sound(soundInfo)));
+
+    return true;
+}
+
 bool ScreenElementMenuItem::VOnEvent(SDL_Event& evt)
 {
+    if (m_bCapturingKey)
+    {
+        return OnCapturedKeyEvent(evt);
+    }
+
     if (evt.type == SDL_KEYDOWN && 
         SDL_GetScancodeFromKey(evt.key.keysym.sym) == m_Hotkey &&
         m_bVisible)
@@ -1177,6 +1430,40 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
     m_Type = StringToMenuItemType(menuItemTypeStr);
 
     ParseValueFromXmlElem(&m_bVisible, pElem->FirstChildElement("IsVisible"));
+
+    if (m_Type == MenuItemType_KeyBinding)
+    {
+        std::string actionStr;
+        ParseValueFromXmlElem(&actionStr, pElem->FirstChildElement("Action"));
+        m_KeyBindingAction = KeyBindings::ConfigNameToAction(actionStr);
+        if (m_KeyBindingAction == KeyBindingAction_None)
+        {
+            LOG_ERROR("Unknown key binding action: " + actionStr + " for menu item: " + m_Name);
+            return false;
+        }
+        m_Text = KeyBindings::GetActionCaption(m_KeyBindingAction);
+
+        if (!ParseValueFromXmlElem(&m_KeyColumnX, pElem->FirstChildElement("KeyColumnX")))
+        {
+            m_KeyColumnX = (int)m_Position.x + 200;
+        }
+    }
+    else if (m_Type == MenuItemType_TextButton)
+    {
+        // <Text> is English, <Text lang="pl"> for localized release
+        const std::string& textLanguage = g_pApp->GetGameDataLanguage();
+        for (TiXmlElement* pTextElem = pElem->FirstChildElement("Text");
+            pTextElem != NULL;
+            pTextElem = pTextElem->NextSiblingElement("Text"))
+        {
+            const char* textLang = pTextElem->Attribute("lang");
+            if (pTextElem->GetText() != NULL &&
+                ((textLang == NULL && m_Text.empty()) || (textLang != NULL && textLanguage == textLang)))
+            {
+                m_Text = pTextElem->GetText();
+            }
+        }
+    }
 
     if (shared_ptr<Image> pImage = LoadImageFromXmlElement(pElem->FirstChildElement("DisabledImage")))
     {
@@ -1333,7 +1620,7 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
         }
     }
 
-    if (m_Images.empty())
+    if (m_Images.empty() && !IsTextItem())
     {
         LOG_ERROR("No images for menu item: " + m_Name);
         return false;
@@ -1344,6 +1631,19 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
 
 bool ScreenElementMenuItem::Press()
 {
+    if (CanBeFocused() && m_Type == MenuItemType_KeyBinding)
+    {
+        Focus();
+        m_bCapturingKey = true;
+        m_CaptureTimeMs = 0;
+
+        SoundInfo soundInfo(SOUND_MENU_SELECT_MENU_ITEM);
+        IEventMgr::Get()->VTriggerEvent(IEventDataPtr(
+            new EventData_Request_Play_Sound(soundInfo)));
+
+        return true;
+    }
+
     if (CanBeFocused())
     {
         if (m_GeneratedEventList.empty())
@@ -1370,7 +1670,7 @@ bool ScreenElementMenuItem::Press()
 
 bool ScreenElementMenuItem::SetState(MenuItemState state)
 {
-    if (m_Images.find(state) != m_Images.end())
+    if (m_Images.find(state) != m_Images.end() || IsTextItem())
     {
         if (state != m_State)
         {
@@ -1389,6 +1689,11 @@ bool ScreenElementMenuItem::CanBeFocused()
     if (!m_bVisible)
     {
         return false;
+    }
+
+    if (IsTextItem())
+    {
+        return m_State != MenuItemState_Disabled;
     }
 
     // Only buttons at this time can be focued
@@ -1445,6 +1750,24 @@ int ScreenElementMenuItem::GetImageX(const shared_ptr<Image>& pImage) const
 
 SDL_Rect ScreenElementMenuItem::GetMenuItemRect()
 {
+    if (IsTextItem())
+    {
+        Point textSize = GetMenuTextSize(m_pTextTexture);
+        SDL_Rect itemRect;
+        itemRect.x = GetTextX();
+        itemRect.y = (int)m_Position.y;
+        itemRect.w = (int)textSize.x;
+        itemRect.h = (int)textSize.y;
+
+        // Whole row including the key is clickable
+        if (m_Type == MenuItemType_KeyBinding)
+        {
+            itemRect.w = max(itemRect.w, m_KeyColumnX + (int)GetMenuTextSize(m_pValueTexture).x - itemRect.x);
+        }
+
+        return itemRect;
+    }
+
     int itemWidth, itemHeight;
     SDL_QueryTexture(m_Images[m_State]->GetTexture(), NULL, NULL, &itemWidth, &itemHeight);
 

@@ -21,6 +21,8 @@ public:
     virtual std::string VGetPattern() { return "*.xml"; }
     virtual bool VUseRawFile() { return false; }
     virtual bool VDiscardRawBufferAfterLoad() { return true; }
+    // TinyXML parses null terminated strings
+    virtual bool VAddNullZero() { return true; }
     virtual uint32 VGetLoadedResourceSize(char* rawBuffer, uint32 rawSize) { return rawSize; }
     virtual bool VLoadResource(char* rawBuffer, uint32 rawSize, std::shared_ptr<ResourceHandle> handle);
 

@@ -22,6 +22,7 @@ ActorController::ActorController(shared_ptr<SceneNode> controlledObject, float s
     m_Speed = speed;
     m_pKeyStates = NULL;
     m_MouseLeftButtonDown = m_MouseRightButtonDown = false;
+    ReleaseAllActions();
 }
 
 void ActorController::HandleAction(ActionType actionType)
@@ -69,59 +70,30 @@ void ActorController::OnUpdate(uint32 msDiff)
     // We need two conditions because I want behaviour such as when both right and left
     // buttons are pressed, I dont want actor to move, e.g. to have the move effect nullyfied
 
-    if (g_pApp->GetControlOptions()->useAlternateControls)
+    if (m_ActionPressed[KeyBindingAction_MoveRight])
     {
-        if (m_InputKeys[SDLK_d])
-        {
-            moveX += m_Speed * (float)msDiff;
-        }
-        if (m_InputKeys[SDLK_a])
-        {
-            moveX -= m_Speed * (float)msDiff;
-        }
-
-        // CLimbing
-        if (m_InputKeys[SDLK_s])
-        {
-            climbY += 5.0;
-        }
-        if (m_InputKeys[SDLK_w])
-        {
-            climbY -= 5.0;
-        }
-
-        // Jumping
-        if (m_InputKeys[SDLK_SPACE] || m_InputKeys[SDLK_w])
-        {
-            moveY -= m_Speed * (float)msDiff;
-        }
+        moveX += m_Speed * (float)msDiff;
     }
-    else
+    if (m_ActionPressed[KeyBindingAction_MoveLeft])
     {
-        if (m_InputKeys[SDLK_RIGHT])
-        {
-            moveX += m_Speed * (float)msDiff;
-        }
-        if (m_InputKeys[SDLK_LEFT])
-        {
-            moveX -= m_Speed * (float)msDiff;
-        }
+        moveX -= m_Speed * (float)msDiff;
+    }
 
-        // CLimbing
-        if (m_InputKeys[SDLK_DOWN])
-        {
-            climbY += 5.0;
-        }
-        if (m_InputKeys[SDLK_UP])
-        {
-            climbY -= 5.0;
-        }
+    // CLimbing
+    if (m_ActionPressed[KeyBindingAction_Down])
+    {
+        climbY += 5.0;
+    }
+    if (m_ActionPressed[KeyBindingAction_Up])
+    {
+        climbY -= 5.0;
+    }
 
-        // Jumping
-        if (m_InputKeys[SDLK_SPACE])
-        {
-            moveY -= m_Speed * (float)msDiff;
-        }
+    // Jumping, with alternate (WASD) controls up jumps aswell
+    if (m_ActionPressed[KeyBindingAction_Jump] ||
+        (g_pApp->GetControlOptions()->useAlternateControls && m_ActionPressed[KeyBindingAction_Up]))
+    {
+        moveY -= m_Speed * (float)msDiff;
     }
 
     if (fabs(climbY) > FLT_EPSILON)
@@ -136,74 +108,63 @@ void ActorController::OnUpdate(uint32 msDiff)
     }
 }
 
-bool ActorController::VOnKeyDown(SDL_Keycode key)
+bool ActorController::OnActionDown(KeyBindingAction action)
 {
-    if (g_pApp->GetControlOptions()->useAlternateControls)
+    switch (action)
     {
-        if (key == SDLK_e)
-        {
-            HandleAction(ActionType_Change_Ammo_Type);
-            return true;
-        }
-        else if (key == SDLK_q)
-        {
-            HandleAction(ActionType_Lift);
-            return true;
-        }
-        else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LSHIFT)
-        {
-            HandleAction(ActionType_Change_Ammo_Type);
-            return true;
-        }
-    }
-    else
-    {
-        if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LALT)
-        {
+        case KeyBindingAction_Fire:
             HandleAction(ActionType_Fire);
             return true;
-        }
-        else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LCTRL)
-        {
+        case KeyBindingAction_Attack:
             HandleAction(ActionType_Attack);
             return true;
-        }
-        else if (key == SDLK_z)
-        {
+        case KeyBindingAction_Lift:
             HandleAction(ActionType_Lift);
             return true;
-        }
-        else if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LSHIFT)
-        {
+        case KeyBindingAction_ChangeAmmo:
             HandleAction(ActionType_Change_Ammo_Type);
             return true;
-        }
+        case KeyBindingAction_None:
+            return false;
+        default:
+            m_ActionPressed[action] = true;
+            return false;
+    }
+}
+
+bool ActorController::OnActionUp(KeyBindingAction action)
+{
+    if (action == KeyBindingAction_Fire)
+    {
+        shared_ptr<EventData_Actor_Fire_Ended> pFireEndedEvent(new EventData_Actor_Fire_Ended(m_pControlledObject->VGetProperties()->GetActorId()));
+        IEventMgr::Get()->VTriggerEvent(pFireEndedEvent);
+        return true;
     }
 
-    m_InputKeys[key] = true;
+    if (action != KeyBindingAction_None)
+    {
+        m_ActionPressed[action] = false;
+    }
 
     return false;
 }
 
+bool ActorController::VOnKeyDown(SDL_Keycode key)
+{
+    return OnActionDown(g_pApp->GetKeyBindings()->GetAction(SDL_GetScancodeFromKey(key)));
+}
+
 bool ActorController::VOnKeyUp(SDL_Keycode key)
 {
-    if (g_pApp->GetControlOptions()->useAlternateControls)
+    return OnActionUp(g_pApp->GetKeyBindings()->GetAction(SDL_GetScancodeFromKey(key)));
+}
+
+void ActorController::ReleaseAllActions()
+{
+    for (bool& isPressed : m_ActionPressed)
     {
-
+        isPressed = false;
     }
-    else
-    {
-        if (SDL_GetScancodeFromKey(key) == SDL_SCANCODE_LALT)
-        {
-            shared_ptr<EventData_Actor_Fire_Ended> pFireEndedEvent(new EventData_Actor_Fire_Ended(m_pControlledObject->VGetProperties()->GetActorId()));
-            IEventMgr::Get()->VTriggerEvent(pFireEndedEvent);
-
-            return true;
-        }
-    }
-
-    m_InputKeys[key] = false;
-    return false;
 }
 
 bool ActorController::VOnPointerMove(SDL_MouseMotionEvent& mouseEvent)
@@ -317,12 +278,12 @@ bool ActorController::VOnTouch(const Touch_Event &evt) {
 }
 
 bool ActorController::OnTap(int id, const Touch_TapEvent &evt) {
-    SDL_Keycode key;
+    KeyBindingAction action;
     switch (id) {
         case PAUSE_TAP_RECOGNIZER:
         {
             // Little hack to open/close ingame menu
-            key = SDLK_ESCAPE;
+            SDL_Keycode key = SDLK_ESCAPE;
 
             SDL_Event event{0};
             event.type = SDL_KEYDOWN;
@@ -334,19 +295,20 @@ bool ActorController::OnTap(int id, const Touch_TapEvent &evt) {
             return true;
         }
         case WEAPON_TAP_RECOGNIZER:
-            key = SDLK_LSHIFT;
+            action = KeyBindingAction_ChangeAmmo;
             break;
         case ATTACK_TAP_RECOGNIZER:
-            key = SDLK_LCTRL;
+            action = KeyBindingAction_Attack;
             break;
         default:
-            key = SDLK_UNKNOWN;
+            action = KeyBindingAction_None;
             break;
     }
 
-    if (key != SDLK_UNKNOWN) {
-        VOnKeyDown(key);
-        return VOnKeyUp(key);
+    if (action != KeyBindingAction_None) {
+        OnActionDown(action);
+        OnActionUp(action);
+        return true;
     }
     return false;
 }
@@ -358,35 +320,35 @@ bool ActorController::OnJoystick(int id, const Touch_JoystickEvent &evt) {
 
         const float deadzone = 0.05 * 0.05;
 
-        SDL_Keycode horizontalKey = SDLK_UNKNOWN;
-        SDL_Keycode verticalKey = SDLK_UNKNOWN;
+        KeyBindingAction horizontalAction = KeyBindingAction_None;
+        KeyBindingAction verticalAction = KeyBindingAction_None;
         if (dx * dx + dy * dy > deadzone) {
 
             if (dx * 2 < dy && dx * 2 > -dy) {
                 // 247 - 292 deg
-                verticalKey = SDLK_DOWN;
+                verticalAction = KeyBindingAction_Down;
             } else if (dx * 2 < -dy && dx * 2 > dy) {
                 // 67 deg - 112 deg
-                verticalKey = SDLK_UP;
+                verticalAction = KeyBindingAction_Up;
             }
 
             if (dy < dx * 2 && dy > -dx * 2) {
                 // 292 - 67 deg
-                horizontalKey = SDLK_RIGHT;
+                horizontalAction = KeyBindingAction_MoveRight;
             } else if (dy < -dx * 2 && dy > dx * 2) {
                 // 112 - 247 deg
-                horizontalKey = SDLK_LEFT;
+                horizontalAction = KeyBindingAction_MoveLeft;
             }
         }
 
-        SDL_Keycode keys[] = {SDLK_LEFT, SDLK_UP, SDLK_RIGHT, SDLK_DOWN};
-        for (SDL_Keycode key : keys) {
-            bool isPressed = m_InputKeys[key];
-            bool press = key == horizontalKey || key == verticalKey;
+        KeyBindingAction actions[] = {KeyBindingAction_MoveLeft, KeyBindingAction_Up, KeyBindingAction_MoveRight, KeyBindingAction_Down};
+        for (KeyBindingAction action : actions) {
+            bool isPressed = m_ActionPressed[action];
+            bool press = action == horizontalAction || action == verticalAction;
             if (!isPressed && press) {
-                VOnKeyDown(key);
+                OnActionDown(action);
             } else if (isPressed && !press) {
-                VOnKeyUp(key);
+                OnActionUp(action);
             }
         }
 
@@ -398,9 +360,9 @@ bool ActorController::OnJoystick(int id, const Touch_JoystickEvent &evt) {
 bool ActorController::OnSwipe(int id, const Touch_SwipeEvent &evt, bool start) {
     if (id == PROJECTILE_SWIPE_RECOGNIZER) {
         if (start) {
-            return VOnKeyDown(SDLK_LALT);
+            return OnActionDown(KeyBindingAction_Fire);
         } else {
-            return VOnKeyUp(SDLK_LALT);
+            return OnActionUp(KeyBindingAction_Fire);
         }
     }
     return false;
@@ -409,9 +371,9 @@ bool ActorController::OnSwipe(int id, const Touch_SwipeEvent &evt, bool start) {
 bool ActorController::OnPress(int id, const Touch_PressEvent &evt, bool start) {
     if (id == JUMP_PRESS_RECOGNIZER) {
         if (start) {
-            return VOnKeyDown(SDLK_SPACE);
+            return OnActionDown(KeyBindingAction_Jump);
         } else {
-            return VOnKeyUp(SDLK_SPACE);
+            return OnActionUp(KeyBindingAction_Jump);
         }
     }
     return false;

@@ -5,7 +5,9 @@
 #include "../SharedDefines.h"
 #include "../Events/Events.h"
 #include "../Events/EventMgr.h"
+#include "KeyBindings.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 // Doesnt really do anything, just implementation of empty methods to conform to
 // IScreenElement interface
@@ -215,7 +217,11 @@ enum MenuItemType
     MenuItemType_Text,
     MenuItemType_Button,
     MenuItemType_Slider,
-    MenuItemType_Image
+    MenuItemType_Image,
+    // Text rendered with the console font instead of images
+    MenuItemType_TextButton,
+    // Action caption and its key, pressing it waits for a new key
+    MenuItemType_KeyBinding
 };
 
 enum MenuItemState
@@ -284,10 +290,32 @@ public:
     bool Press();
     SDL_Rect GetMenuItemRect();
 
+    // Key binding item is waiting for a key to be pressed, it gets all input until then
+    bool IsCapturingKey() const { return m_bCapturingKey; }
+    void StopCapturingKey() { m_bCapturingKey = false; }
+
     void OnStateChanged(MenuItemState newState, MenuItemState oldState);
 
 private:
     int GetImageX(const shared_ptr<Image>& pImage) const;
+
+    bool IsTextItem() const { return m_Type == MenuItemType_TextButton || m_Type == MenuItemType_KeyBinding; }
+    bool OnCapturedKeyEvent(SDL_Event& evt);
+    std::string GetValueText() const;
+    void RenderText(SDL_Texture* pTexture, int x, int y, SDL_Color color);
+    int GetTextX() const;
+
+    // Text items
+    std::string m_Text;
+    KeyBindingAction m_KeyBindingAction;
+    int m_KeyColumnX;
+    bool m_bCapturingKey;
+    uint32 m_CaptureTimeMs;
+    SDL_Texture* m_pTextTexture;
+    SDL_Texture* m_pValueTexture;
+    std::string m_ValueTextureText;
+    // Font the textures were rendered with, they are rendered again when it changes
+    TTF_Font* m_pTexturesFont;
 
     std::string m_Name;
     MenuItemState m_State;

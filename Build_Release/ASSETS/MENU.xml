@@ -2552,7 +2552,6 @@
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
-            <!-- Key rebinding is not supported -->
             <Name>CONTROLS_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey lang="pl">S</Hotkey>
@@ -2562,7 +2561,8 @@
             <DisabledImage>/MENU_OPTIONS/controls_disabled.png</DisabledImage>
             <Position x="220" y="295" />
             <GeneratedEvent>
-                <Type>NotImplemented</Type>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options_Controls</PageName>
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
@@ -2603,6 +2603,121 @@
             <GeneratedEvent>
                 <Type>SwitchPage</Type>
                 <PageName>MenuPage_Main</PageName>
+            </GeneratedEvent>
+        </MenuItem>
+    </MenuPage>
+
+    <!-- CONTROLS PAGE -->
+    <MenuPage>
+        <PageName>MenuPage_Options_Controls</PageName>
+        <KeyboardEvent>
+            <KeyType>Escape</KeyType>
+            <GeneratedEvent>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options</PageName>
+            </GeneratedEvent>
+        </KeyboardEvent>
+        <MenuItem>
+            <Name>CONTROLS_TITLE_TEXT</Name>
+            <Type>Text</Type>
+            <State>Inactive</State>
+            <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/005_CONTROLS.PCX</InactiveImage>
+            <Position x="220" y="148" />
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_MOVELEFT</Name>
+            <Type>KeyBinding</Type>
+            <Action>MoveLeft</Action>
+            <State>Inactive</State>
+            <Position x="150" y="182" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_MOVERIGHT</Name>
+            <Type>KeyBinding</Type>
+            <Action>MoveRight</Action>
+            <State>Inactive</State>
+            <Position x="150" y="201" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_UP</Name>
+            <Type>KeyBinding</Type>
+            <Action>Up</Action>
+            <State>Inactive</State>
+            <Position x="150" y="220" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_DOWN</Name>
+            <Type>KeyBinding</Type>
+            <Action>Down</Action>
+            <State>Inactive</State>
+            <Position x="150" y="239" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_JUMP</Name>
+            <Type>KeyBinding</Type>
+            <Action>Jump</Action>
+            <State>Inactive</State>
+            <Position x="150" y="258" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_ATTACK</Name>
+            <Type>KeyBinding</Type>
+            <Action>Attack</Action>
+            <State>Inactive</State>
+            <Position x="150" y="277" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_FIRE</Name>
+            <Type>KeyBinding</Type>
+            <Action>Fire</Action>
+            <State>Inactive</State>
+            <Position x="150" y="296" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_CHANGEAMMO</Name>
+            <Type>KeyBinding</Type>
+            <Action>ChangeAmmo</Action>
+            <State>Inactive</State>
+            <Position x="150" y="315" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>KEY_LIFT</Name>
+            <Type>KeyBinding</Type>
+            <Action>Lift</Action>
+            <State>Inactive</State>
+            <Position x="150" y="334" />
+            <KeyColumnX>345</KeyColumnX>
+        </MenuItem>
+        <MenuItem>
+            <Name>RESTORE_DEFAULTS_BUTTON</Name>
+            <Type>TextButton</Type>
+            <Text>Restore defaults</Text>
+            <Text lang="pl">Przywroc domyslne</Text>
+            <State>Inactive</State>
+            <Position x="0" y="358" />
+            <GeneratedEvent>
+                <Type>RestoreDefaultKeyBindings</Type>
+            </GeneratedEvent>
+        </MenuItem>
+        <MenuItem>
+            <Name>BACK_BUTTON</Name>
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
+            <State>Inactive</State>
+            <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DISPLAY/019_PREVIOUSMENU.PCX</InactiveImage>
+            <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DISPLAY/020_PREVIOUSMENU.PCX</ActiveImage>
+            <Position x="241" y="385" />
+            <GeneratedEvent>
+                <Type>SwitchPage</Type>
+                <PageName>MenuPage_Options</PageName>
             </GeneratedEvent>
         </MenuItem>
     </MenuPage>

@@ -1299,9 +1299,17 @@ void BaseGameLogic::VResetLevel()
     // Handle all pending events before reset
     IEventMgr::Get()->VUpdate(IEventMgr::kINFINITE);
 
+    // Destroying an actor erases it from m_ActorMap, so the map cannot be iterated meanwhile
+    std::vector<uint32> actorIds;
+    actorIds.reserve(m_ActorMap.size());
     for (auto &actorIter : m_ActorMap)
     {
-        shared_ptr<EventData_Destroy_Actor> pEvent(new EventData_Destroy_Actor(actorIter.second->GetGUID()));
+        actorIds.push_back(actorIter.first);
+    }
+
+    for (uint32 actorId : actorIds)
+    {
+        shared_ptr<EventData_Destroy_Actor> pEvent(new EventData_Destroy_Actor(actorId));
         IEventMgr::Get()->VTriggerEvent(pEvent);
     }
 

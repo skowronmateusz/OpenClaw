@@ -184,7 +184,7 @@ On first launch the game creates `config.xml` and `SAVES.XML` from the `config.t
 
 # Controls
 
-| Key | Action |
+| Default key | Action |
 |---|---|
 | ← → | move |
 | ↑ ↓ | climb; ↓ also crouches |
@@ -196,7 +196,9 @@ On first launch the game creates `config.xml` and `SAVES.XML` from the `config.t
 | Esc | pause menu |
 | ` | developer console |
 
-Only the left Ctrl, Option and Shift keys work. The alternative layout (WASD + mouse) is enabled with `<UseAlternateControls>true</UseAlternateControls>` in `config.xml`; in it, lifting and throwing is on the Q key.
+Keys can be changed in Options → Controls, both from the main menu and the pause menu: select an action, press Enter (or click it) and press the new key, Esc cancels. A key already used by another action is swapped with it, "Restore defaults" brings the default layout back. Esc and ` cannot be rebound. The keys are saved in `config.xml` under `<ControlOptions><KeyBindings>`.
+
+The alternative default layout (WASD + mouse) is enabled with `<UseAlternateControls>true</UseAlternateControls>` in `config.xml`: A/D move, W/S climb (W also jumps), Space jump, J or right mouse button attack, K or left mouse button shoot, E switch weapon, Q lift and throw.
 
 # Lifting and throwing
 

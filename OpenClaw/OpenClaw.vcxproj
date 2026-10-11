@@ -186,6 +186,7 @@
     <ClCompile Include="Engine\UserInterface\Touch\TouchRecognizers\TapRecognizer.cpp" />
     <ClCompile Include="Engine\UserInterface\GameHUD.cpp" />
     <ClCompile Include="Engine\UserInterface\HumanView.cpp" />
+    <ClCompile Include="Engine\UserInterface\KeyBindings.cpp" />
     <ClCompile Include="Engine\UserInterface\MovementController.cpp" />
     <ClCompile Include="Engine\UserInterface\ScoreScreen\ScoreScreenCommon.cpp" />
     <ClCompile Include="Engine\UserInterface\ScoreScreen\ScoreScreenProcesses.cpp" />
@@ -322,6 +323,7 @@
     <ClInclude Include="Engine\Scene\SceneNodes.h" />
     <ClInclude Include="Engine\UserInterface\GameHUD.h" />
     <ClInclude Include="Engine\UserInterface\HumanView.h" />
+    <ClInclude Include="Engine\UserInterface\KeyBindings.h" />
     <ClInclude Include="Engine\UserInterface\MovementController.h" />
     <ClInclude Include="Engine\UserInterface\UserInterface.h" />
     <ClInclude Include="Engine\Events\EventMgr.h" />

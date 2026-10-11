@@ -344,6 +344,8 @@ void HumanView::RegisterAllDelegates()
         this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::ShowMessageDelegate), EventData_Show_Message::sk_EventType);
+    IEventMgr::Get()->VAddListener(MakeDelegate(
+        this, &HumanView::RestoreDefaultKeyBindingsDelegate), EventData_Restore_Default_Key_Bindings::sk_EventType);
     
 }
 
@@ -386,6 +388,8 @@ void HumanView::RemoveAllDelegates()
         this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::ShowMessageDelegate), EventData_Show_Message::sk_EventType);
+    IEventMgr::Get()->VRemoveListener(MakeDelegate(
+        this, &HumanView::RestoreDefaultKeyBindingsDelegate), EventData_Restore_Default_Key_Bindings::sk_EventType);
 }
 
 //=====================================================================================================================
@@ -961,6 +965,12 @@ void HumanView::FullscreenChangedDelegate(IEventDataPtr pEventData)
         g_pApp->SetFullscreen(pCastEventData->GetIsFullscreen());
         g_pApp->SaveGameOptions();
     }
+}
+
+void HumanView::RestoreDefaultKeyBindingsDelegate(IEventDataPtr pEventData)
+{
+    g_pApp->GetKeyBindings()->SetDefaults(g_pApp->GetControlOptions()->useAlternateControls);
+    g_pApp->SaveGameOptions();
 }
 
 void HumanView::ClawDiedDelegate(IEventDataPtr pEventData)

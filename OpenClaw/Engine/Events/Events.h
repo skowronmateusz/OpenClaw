@@ -2559,6 +2559,27 @@ private:
 };
 
 //---------------------------------------------------------------------------------------------------------------------
+// EventData_Restore_Default_Key_Bindings - resets keyboard controls to the defaults and saves them
+//---------------------------------------------------------------------------------------------------------------------
+class EventData_Restore_Default_Key_Bindings : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+
+    EventData_Restore_Default_Key_Bindings() { }
+
+    virtual const EventType& VGetEventType(void) const { return sk_EventType; }
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EventData_Restore_Default_Key_Bindings());
+    }
+    virtual void VSerialize(std::ostringstream& out) const { }
+    virtual void VDeserialize(std::istringstream& in) { }
+
+    virtual const char* GetName(void) const { return "EventData_Restore_Default_Key_Bindings"; }
+};
+
+//---------------------------------------------------------------------------------------------------------------------
 // EventData_Play_Cutscene - plays given movies one after another, then queues finished event (if any)
 //---------------------------------------------------------------------------------------------------------------------
 class EventData_Play_Cutscene : public BaseEventData

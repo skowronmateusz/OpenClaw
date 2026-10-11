@@ -743,6 +743,24 @@ bool BaseGameApp::LoadGameOptions(const char* inConfigFile)
     {
         ParseValueFromXmlElem(&m_ControlOptions.useAlternateControls,
                               pControlOptionsRootElem->FirstChildElement("UseAlternateControls"));
+        m_ControlOptions.keyBindings.SetDefaults(m_ControlOptions.useAlternateControls);
+        if (TiXmlElement* pKeyBindingsElem = pControlOptionsRootElem->FirstChildElement("KeyBindings"))
+        {
+            for (TiXmlElement* pKeyElem = pKeyBindingsElem->FirstChildElement();
+                pKeyElem != NULL;
+                pKeyElem = pKeyElem->NextSiblingElement())
+            {
+                KeyBindingAction action = KeyBindings::ConfigNameToAction(pKeyElem->Value());
+                const char* keyName = pKeyElem->GetText();
+                SDL_Scancode key = keyName != NULL ? KeyBindings::ConfigNameToKey(keyName) : SDL_SCANCODE_UNKNOWN;
+                if (action == KeyBindingAction_None || !KeyBindings::IsKeyBindable(key))
+                {
+                    LOG_WARNING("Invalid key binding in config: " + std::string(pKeyElem->Value()));
+                    continue;
+                }
+                m_ControlOptions.keyBindings.SetKey(action, key);
+            }
+        }
         if (TiXmlElement* pTouchScreenOptionsRootElem = pControlOptionsRootElem->FirstChildElement("TouchScreen"))
         {
             ParseValueFromXmlElem(&m_ControlOptions.touchScreen.enable,
@@ -851,6 +869,15 @@ void BaseGameApp::SaveGameOptions(const char* outConfigFile)
     SetXmlChildElementText(pAudioElem, "MusicVolume", ToStr(m_GameOptions.musicVolume));
     SetXmlChildElementText(pAudioElem, "SoundOn", m_GameOptions.soundOn ? "true" : "false");
     SetXmlChildElementText(pAudioElem, "MusicOn", m_GameOptions.musicOn ? "true" : "false");
+
+    TiXmlElement* pControlOptionsElem = GetOrCreateXmlChildElement(pConfigRoot, "ControlOptions");
+    TiXmlElement* pKeyBindingsElem = GetOrCreateXmlChildElement(pControlOptionsElem, "KeyBindings");
+    for (int action = 0; action < KeyBindingAction_Count; action++)
+    {
+        SDL_Scancode key = m_ControlOptions.keyBindings.GetKey((KeyBindingAction)action);
+        SetXmlChildElementText(pKeyBindingsElem, KeyBindings::GetActionConfigName((KeyBindingAction)action),
+            KeyBindings::KeyToConfigName(key));
+    }
 
     // Same indentation as the shipped config file so that only changed values differ
     TiXmlPrinter printer;

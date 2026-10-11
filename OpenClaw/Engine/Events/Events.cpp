@@ -52,6 +52,7 @@ const EventType EventData_Menu_Modify_Item_State::sk_EventType(0x4566b92);
 const EventType EventData_Add_Static_Geometry::sk_EventType(0x456abc2);
 const EventType EventData_Enter_Menu::sk_EventType(0xdc4606a5);
 const EventType EventData_Show_Message::sk_EventType(0x3e9a51c7);
+const EventType EventData_Restore_Default_Key_Bindings::sk_EventType(0x6b1d42e5);
 const EventType EventData_Play_Cutscene::sk_EventType(0x5c7a0e31);
 const EventType EventData_Item_Picked_Up::sk_EventType(0xdc5706a5);
 const EventType EventData_Finished_Level::sk_EventType(0xdc5706f5);

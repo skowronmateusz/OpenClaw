@@ -84,6 +84,9 @@
     <ClCompile Include="Engine\UserInterface\HumanView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\UserInterface\KeyBindings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -426,6 +429,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\UserInterface\HumanView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UserInterface\KeyBindings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Scene\Scene.h">

@@ -3,6 +3,7 @@
 
 #include "Engine/Interfaces.h"
 #include "Engine/SharedDefines.h"
+#include "Engine/UserInterface/KeyBindings.h"
 
 class SceneNode;
 class ActorController : public IKeyboardHandler, public IPointerHandler, public ITouchHandler
@@ -26,6 +27,10 @@ public:
     bool VOnTouch(const Touch_Event &evt) override;
 
 private:
+    void ReleaseAllActions();
+    bool OnActionDown(KeyBindingAction action);
+    bool OnActionUp(KeyBindingAction action);
+
     bool OnTap(int id, const Touch_TapEvent &evt);
     bool OnJoystick(int id, const Touch_JoystickEvent &evt);
     bool OnSwipe(int id, const Touch_SwipeEvent &evt, bool start);
@@ -34,7 +39,8 @@ private:
     shared_ptr<SceneNode> m_pControlledObject;
     float m_Speed;
 
-    std::map<int, bool> m_InputKeys;
+    // Held movement / jump actions
+    bool m_ActionPressed[KeyBindingAction_Count];
 
     // SDL_Scancode array
     const uint8* m_pKeyStates;

@@ -75,6 +75,7 @@ protected:
     void SetVolumeDelegate(IEventDataPtr pEventData);
     void SoundEnabledChangedDelegate(IEventDataPtr pEventData);
     void FullscreenChangedDelegate(IEventDataPtr pEventData);
+    void RestoreDefaultKeyBindingsDelegate(IEventDataPtr pEventData);
     void ClawDiedDelegate(IEventDataPtr pEventData);
     void TeleportActorDelegate(IEventDataPtr pEventData);
     void EnterMenuDelegate(IEventDataPtr pEventData);
