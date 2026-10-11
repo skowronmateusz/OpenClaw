@@ -16,7 +16,9 @@ const uint32 g_InvalidGameViewId = 0xFFFFFFFF;
 HumanView::HumanView(SDL_Renderer* renderer)
     :
     m_bRendering(true),
-    m_bPostponeRenderPresent(false)
+    m_bPostponeRenderPresent(false),
+    m_pMessageTexture(NULL),
+    m_MessageTimeLeftMs(0)
 {
     m_pProcessMgr = new ProcessMgr();
 
@@ -50,6 +52,11 @@ HumanView::~HumanView()
     }
 
     SAFE_DELETE(m_pProcessMgr);
+
+    if (m_pMessageTexture)
+    {
+        SDL_DestroyTexture(m_pMessageTexture);
+    }
 }
 
 void HumanView::RegisterConsoleCommandHandler(void(*handler)(const char*, void*), void* userdata)
@@ -100,6 +107,8 @@ void HumanView::VOnRender(uint32 msDiff)
 
         g_pApp->GetGameLogic()->VRenderDiagnostics(renderer, m_pCamera);
 
+        RenderMessage(renderer);
+
         m_pConsole->OnRender(renderer);
 
         if (!m_bPostponeRenderPresent)
@@ -114,6 +123,11 @@ void HumanView::VOnUpdate(uint32 msDiff)
     m_pProcessMgr->UpdateProcesses(msDiff);
 
     m_pConsole->OnUpdate(msDiff);
+
+    if (m_MessageTimeLeftMs > 0)
+    {
+        m_MessageTimeLeftMs -= msDiff;
+    }
 
     for (shared_ptr<IScreenElement> &element : m_ScreenElements)
     {
@@ -328,6 +342,8 @@ void HumanView::RegisterAllDelegates()
         this, &HumanView::IngameMenuEndGameDelegate), EventData_IngameMenu_End_Game::sk_EventType);
     IEventMgr::Get()->VAddListener(MakeDelegate(
         this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
+    IEventMgr::Get()->VAddListener(MakeDelegate(
+        this, &HumanView::ShowMessageDelegate), EventData_Show_Message::sk_EventType);
     
 }
 
@@ -368,6 +384,8 @@ void HumanView::RemoveAllDelegates()
         this, &HumanView::BossFightEndedDelegate), EventData_Boss_Fight_Ended::sk_EventType);
     IEventMgr::Get()->VRemoveListener(MakeDelegate(
         this, &HumanView::PlayCutsceneDelegate), EventData_Play_Cutscene::sk_EventType);
+    IEventMgr::Get()->VRemoveListener(MakeDelegate(
+        this, &HumanView::ShowMessageDelegate), EventData_Show_Message::sk_EventType);
 }
 
 //=====================================================================================================================
@@ -693,6 +711,7 @@ void HumanView::LoadGameDelegate(IEventDataPtr pEventData)
         if (levelNumber > g_pApp->GetDebugOptions()->lastImplementedLevel)
         {
             IEventMgr::Get()->VQueueEvent(IEventDataPtr(new EventData_Enter_Menu()));
+            IEventMgr::Get()->VQueueEvent(IEventDataPtr(new EventData_Show_Message("LevelNotImplemented")));
         }
         else
         {
@@ -702,6 +721,86 @@ void HumanView::LoadGameDelegate(IEventDataPtr pEventData)
             g_pApp->GetGameLogic()->VChangeState(GameState_LoadingLevel);
         }
     }
+}
+
+void HumanView::ShowMessageDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EventData_Show_Message> pCastEventData =
+        static_pointer_cast<EventData_Show_Message>(pEventData);
+
+    // Messages in the language of the game data. Polish ones are written without diacritics,
+    // which the console font does not have.
+    static const std::map<std::string, std::pair<std::string, std::string>> s_Messages =
+    {
+        { "NotImplemented", { "This feature is not implemented yet", "Ta funkcja nie jest jeszcze zaimplementowana" } },
+        { "LevelNotImplemented", { "Next level is not implemented yet", "Kolejny poziom nie jest jeszcze zaimplementowany" } },
+    };
+
+    auto findIt = s_Messages.find(pCastEventData->GetMessageId());
+    if (findIt == s_Messages.end())
+    {
+        LOG_WARNING("Unknown message: " + pCastEventData->GetMessageId());
+        return;
+    }
+
+    const std::string& text = g_pApp->GetGameDataLanguage() == "pl" ? findIt->second.second : findIt->second.first;
+
+    if (m_pMessageTexture)
+    {
+        SDL_DestroyTexture(m_pMessageTexture);
+        m_pMessageTexture = NULL;
+    }
+
+    SDL_Surface* pSurface = TTF_RenderUTF8_Blended(g_pApp->GetConsoleFont(), text.c_str(), { 255, 255, 255, 255 });
+    if (pSurface == NULL)
+    {
+        LOG_WARNING("Failed to render message: " + text);
+        return;
+    }
+    m_pMessageTexture = SDL_CreateTextureFromSurface(g_pApp->GetRenderer(), pSurface);
+    SDL_FreeSurface(pSurface);
+
+    m_MessageTimeLeftMs = 3000;
+}
+
+void HumanView::RenderMessage(SDL_Renderer* pRenderer)
+{
+    if (m_pMessageTexture == NULL || m_MessageTimeLeftMs <= 0)
+    {
+        return;
+    }
+
+    // Drawn unscaled into the frame, text is scaled like the rest of the game
+    float oldScaleX, oldScaleY;
+    SDL_RenderGetScale(pRenderer, &oldScaleX, &oldScaleY);
+    SDL_RenderSetScale(pRenderer, 1.0f, 1.0f);
+
+    const GameOptions* pOptions = g_pApp->GetGameConfig();
+    // A bit smaller than the game scale, so the message fits below the lowest menu item
+    const double scale = (pOptions->scale > 0 ? pOptions->scale : 1.0) * 0.75;
+
+    int textWidth, textHeight;
+    SDL_QueryTexture(m_pMessageTexture, NULL, NULL, &textWidth, &textHeight);
+
+    SDL_Rect textRect;
+    textRect.w = (int)(textWidth * scale);
+    textRect.h = (int)(textHeight * scale);
+    textRect.x = (pOptions->windowWidth - textRect.w) / 2;
+    const int padding = (int)(8 * scale);
+
+    // At the very bottom, below the menu items
+    textRect.y = pOptions->windowHeight - textRect.h - 2 * padding;
+    SDL_Rect boxRect = { textRect.x - padding, textRect.y - padding, textRect.w + 2 * padding, textRect.h + 2 * padding };
+
+    SDL_SetRenderDrawBlendMode(pRenderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 200);
+    SDL_RenderFillRect(pRenderer, &boxRect);
+    SDL_SetRenderDrawColor(pRenderer, 200, 170, 60, 255);
+    SDL_RenderDrawRect(pRenderer, &boxRect);
+    SDL_RenderCopy(pRenderer, m_pMessageTexture, NULL, &textRect);
+
+    SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
+    SDL_RenderSetScale(pRenderer, oldScaleX, oldScaleY);
 }
 
 void HumanView::EnterMenuDelegate(IEventDataPtr pEventData)
@@ -869,7 +968,8 @@ void HumanView::ClawDiedDelegate(IEventDataPtr pEventData)
     shared_ptr<EventData_Claw_Died> pCastEventData =
         static_pointer_cast<EventData_Claw_Died>(pEventData);
 
-    if (pCastEventData->GetRemainingLives() < 0)
+    // Like in the original game, the game is over when Claw loses his last life
+    if (pCastEventData->GetRemainingLives() <= 0)
     {
         TiXmlElement* pXmlGameOverMenuRoot = XmlResourceLoader::LoadAndReturnRootXmlElement("GAME_OVER_MENU.XML");
         assert(pXmlGameOverMenuRoot != NULL);

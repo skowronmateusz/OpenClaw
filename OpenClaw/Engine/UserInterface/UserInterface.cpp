@@ -290,6 +290,10 @@ static IEventDataPtr XmlElemToGeneratedEvent(TiXmlElement* pElem)
         pEventData.reset(new EventData_Play_Cutscene(std::vector<int>(1, movie),
             IEventDataPtr(new EventData_Enter_Menu())));
     }
+    else if (eventType == "NotImplemented")
+    {
+        pEventData.reset(new EventData_Show_Message("NotImplemented"));
+    }
     else if (eventType == "QuitGame")
     {
         pEventData.reset(new EventData_Quit_Game());
@@ -1217,10 +1221,23 @@ bool ScreenElementMenuItem::Initialize(TiXmlElement* pElem)
         m_MenuItemImageList.push_back(pMenuItemImage);
     }*/
 
-    std::string hotkeyStr;
-    if (ParseValueFromXmlElem(&hotkeyStr, pElem->FirstChildElement("Hotkey")))
+    // <Hotkey> is the underlined letter of the English caption, <Hotkey lang="pl"> of the
+    // caption in a localized release. A localized hotkey takes precedence, a localized release
+    // without one gets no hotkey since its caption does not underline the English letter.
+    const std::string& language = g_pApp->GetGameDataLanguage();
+    for (TiXmlElement* pHotkeyElem = pElem->FirstChildElement("Hotkey");
+        pHotkeyElem != NULL;
+        pHotkeyElem = pHotkeyElem->NextSiblingElement("Hotkey"))
     {
-        m_Hotkey = StringToSDLKeycode(hotkeyStr);
+        const char* hotkeyLang = pHotkeyElem->Attribute("lang");
+        if ((hotkeyLang == NULL && language == "en") || (hotkeyLang != NULL && language == hotkeyLang))
+        {
+            std::string hotkeyStr;
+            if (ParseValueFromXmlElem(&hotkeyStr, pHotkeyElem))
+            {
+                m_Hotkey = StringToSDLKeycode(hotkeyStr);
+            }
+        }
     }
 
     for (TiXmlElement* pGeneratedEventElem = pElem->FirstChildElement("GeneratedEvent");

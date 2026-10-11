@@ -7,8 +7,8 @@
         <AnimationPath>/LEVEL4/ANIS/CUTTHROAT/*.ANI</AnimationPath>
     </AnimationComponent>
     <HealthComponent>
-        <Health>25</Health>
-        <MaxHealth>25</MaxHealth>
+        <Health>9</Health>
+        <MaxHealth>9</MaxHealth>
     </HealthComponent>
     <EnemyAIComponent>
         <DeathAnimation>killfall</DeathAnimation>

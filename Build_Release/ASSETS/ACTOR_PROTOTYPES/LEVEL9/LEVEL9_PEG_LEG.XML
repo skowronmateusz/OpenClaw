@@ -8,8 +8,8 @@
         <PauseOnStart>false</PauseOnStart>
     </AnimationComponent>
     <HealthComponent>
-        <Health>20</Health>
-        <MaxHealth>20</MaxHealth>
+        <Health>7</Health>
+        <MaxHealth>7</MaxHealth>
     </HealthComponent>
     <EnemyAIComponent>
         <DeathAnimation>killfall</DeathAnimation>

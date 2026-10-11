@@ -7,8 +7,8 @@
         <AnimationPath>/LEVEL4/ANIS/RAT/*</AnimationPath>
     </AnimationComponent>
     <HealthComponent>
-        <Health>5</Health>
-        <MaxHealth>5</MaxHealth>
+        <Health>1</Health>
+        <MaxHealth>1</MaxHealth>
     </HealthComponent>
     <EnemyAIComponent>
         <DeathAnimation>idle</DeathAnimation>

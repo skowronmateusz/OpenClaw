@@ -83,6 +83,9 @@ protected:
     void BossFightEndedDelegate(IEventDataPtr pEventData);
     void IngameMenuEndGameDelegate(IEventDataPtr pEventData);
     void PlayCutsceneDelegate(IEventDataPtr pEventData);
+    void ShowMessageDelegate(IEventDataPtr pEventData);
+
+    void RenderMessage(SDL_Renderer* pRenderer);
 
     uint32 m_ViewId;
     uint32 m_ActorId;
@@ -110,6 +113,10 @@ protected:
     bool m_bPostponeRenderPresent;
 
     std::string m_CurrentLevelMusic;
+
+    // Short message shown on top of everything, see ShowMessageDelegate
+    SDL_Texture* m_pMessageTexture;
+    int m_MessageTimeLeftMs;
 
 private:
     void RegisterAllDelegates();

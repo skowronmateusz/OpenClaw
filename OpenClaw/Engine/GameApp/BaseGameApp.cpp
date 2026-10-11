@@ -1121,6 +1121,22 @@ bool BaseGameApp::InitializeFont(GameOptions& gameOptions)
 //---------------------------------------------------------------------------------------------------------------------
 bool BaseGameApp::InitializeLocalization(GameOptions& gameOptions)
 {
+    // Localized releases replace the menu captions in CLAW.REZ, so e.g. underlined menu hotkeys
+    // differ. The release is recognized by its credits, which name the localized title.
+    m_GameDataLanguage = "en";
+
+    Resource creditsResource("/STATES/CREDITS/CREDITS.TXT");
+    if (shared_ptr<ResourceHandle> pHandle = m_pResourceMgr->VGetHandle(&creditsResource, ORIGINAL_RESOURCE))
+    {
+        std::string credits(pHandle->GetDataBuffer(), pHandle->GetSize());
+        if (credits.find("Kapitan Pazur") != std::string::npos)
+        {
+            m_GameDataLanguage = "pl";
+        }
+    }
+
+    LOG("Game data language: " + m_GameDataLanguage);
+
     return true;
 }
 

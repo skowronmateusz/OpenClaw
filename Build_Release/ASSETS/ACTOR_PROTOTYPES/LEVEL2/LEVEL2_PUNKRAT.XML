@@ -7,8 +7,8 @@
         <AnimationPath>/LEVEL2/ANIS/PUNKRAT/*</AnimationPath>
     </AnimationComponent>
     <HealthComponent>
-        <Health>5</Health>
-        <MaxHealth>5</MaxHealth>
+        <Health>2</Health>
+        <MaxHealth>2</MaxHealth>
     </HealthComponent>
     <EnemyAIComponent>
         <DeathAnimation>idle</DeathAnimation>

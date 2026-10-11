@@ -18,8 +18,8 @@
         <TriggerFinitedTimes>1000</TriggerFinitedTimes>
     </TriggerComponent>
     <HealthComponent>
-        <Health>10</Health>
-        <MaxHealth>10</MaxHealth>
+        <Health>3</Health>
+        <MaxHealth>3</MaxHealth>
     </HealthComponent>
     <LootComponent>
         <LootSoundChance>100</LootSoundChance>

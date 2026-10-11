@@ -6,7 +6,7 @@
             <CheckpointNumber>0</CheckpointNumber>
             <Score>0</Score>
             <Health>100</Health>
-            <Lives>3</Lives>
+            <Lives>7</Lives>
             <BulletCount>10</BulletCount>
             <MagicCount>5</MagicCount>
             <DynamiteCount>3</DynamiteCount>

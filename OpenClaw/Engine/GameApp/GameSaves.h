@@ -237,7 +237,7 @@ public:
         fullCheckpoint0.checkpointIdx = 0;
         fullCheckpoint0.dynamiteCount = 10;
         fullCheckpoint0.health = 100;
-        fullCheckpoint0.lives = 3;
+        fullCheckpoint0.lives = 7;
         fullCheckpoint0.magicCount = 5;
         fullCheckpoint0.score = 0;
 
@@ -246,7 +246,7 @@ public:
         fullCheckpoint1.checkpointIdx = 1;
         fullCheckpoint1.dynamiteCount = 10;
         fullCheckpoint1.health = 100;
-        fullCheckpoint1.lives = 3;
+        fullCheckpoint1.lives = 7;
         fullCheckpoint1.magicCount = 5;
         fullCheckpoint1.score = 0;
 
@@ -255,7 +255,7 @@ public:
         fullCheckpoint2.checkpointIdx = 2;
         fullCheckpoint2.dynamiteCount = 10;
         fullCheckpoint2.health = 100;
-        fullCheckpoint2.lives = 3;
+        fullCheckpoint2.lives = 7;
         fullCheckpoint2.magicCount = 5;
         fullCheckpoint2.score = 0;
 

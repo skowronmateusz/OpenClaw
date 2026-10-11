@@ -1451,14 +1451,21 @@ namespace ActorTemplates
         }
 
         std::string projectileTypeStr;
+        // Damage values of the original game (CLAW.EXE). Dynamite does not hurt by a direct hit,
+        // only its explosion does.
         int32 damage = 0;
-        if (ammoType == AmmoType_Pistol) { projectileTypeStr = "DamageType_Bullet"; damage = 20; }
-        else if (ammoType == AmmoType_Magic) { projectileTypeStr = "DamageType_Magic"; damage = 50; }
-        else if (ammoType == AmmoType_Dynamite) { projectileTypeStr = "DamageType_Explosion"; damage = 25; }
+        int32 explosionDamage = 0;
+        if (ammoType == AmmoType_Pistol) { projectileTypeStr = "DamageType_Bullet"; damage = 8; }
+        else if (ammoType == AmmoType_Magic) { projectileTypeStr = "DamageType_Magic"; damage = 25; }
+        else if (ammoType == AmmoType_Dynamite) { projectileTypeStr = "DamageType_Explosion"; explosionDamage = 15; }
         else { assert(false && "Unknown projectile"); }
 
         TiXmlElement* pProjectileAIComponent = new TiXmlElement("ProjectileAIComponent");
         XML_ADD_TEXT_ELEMENT("Damage", ToStr(damage).c_str(), pProjectileAIComponent);
+        if (explosionDamage > 0)
+        {
+            XML_ADD_TEXT_ELEMENT("ExplosionDamage", ToStr(explosionDamage).c_str(), pProjectileAIComponent);
+        }
         XML_ADD_TEXT_ELEMENT("ProjectileType", projectileTypeStr.c_str(), pProjectileAIComponent);
         XML_ADD_TEXT_ELEMENT("SourceActorId", ToStr(sourceActorId).c_str(), pProjectileAIComponent);
         XML_ADD_2_PARAM_ELEMENT("Speed", "x", ToStr(speed.x).c_str(), "y", "0", pProjectileAIComponent);

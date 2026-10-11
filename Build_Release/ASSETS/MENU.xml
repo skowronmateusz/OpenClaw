@@ -25,6 +25,7 @@
             <Name>SINGLE_PLAYER_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>S</Hotkey>
+            <Hotkey lang="pl">J</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/001_SINGLEPLAYER.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/002_SINGLEPLAYER.PCX</ActiveImage>
@@ -38,19 +39,20 @@
             <Name>MULTIPLAYER_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>M</Hotkey>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/003_MULTIPLAYER.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/004_MULTIPLAYER.PCX</ActiveImage>
             <Position x="190" y="245" />
             <GeneratedEvent>
-                <Type>SwitchPage</Type>
-                <PageName>MenuPage_Multiplayer</PageName>
+                <Type>NotImplemented</Type>
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <Name>REPLAY_MOVIES_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>R</Hotkey>
+            <Hotkey lang="pl">F</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/005_REPLAYMOVIES.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/006_REPLAYMOVIES.PCX</ActiveImage>
@@ -65,6 +67,7 @@
             <Name>OPTIONS_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>O</Hotkey>
+            <Hotkey lang="pl">O</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/008_OPTIONS.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/009_OPTIONS.PCX</ActiveImage>
@@ -78,6 +81,7 @@
             <Name>CREDITS_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>C</Hotkey>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/015_CREDITS.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/016_CREDITS.PCX</ActiveImage>
@@ -91,6 +95,7 @@
             <Name>HELP_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>H</Hotkey>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State> 
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/010_HELP.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/011_HELP.PCX</ActiveImage>
@@ -118,6 +123,7 @@
             <Name>QUIT_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>Q</Hotkey>
+            <Hotkey lang="pl">W</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/012_QUIT.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/013_QUIT.PCX</ActiveImage>
@@ -152,6 +158,7 @@
             <Name>LOGO_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>C</Hotkey>
+            <Hotkey lang="pl">C</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/001_MOVIEONE.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/002_MOVIEONE.PCX</ActiveImage>
@@ -166,6 +173,7 @@
             <Name>INTRO_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>W</Hotkey>
+            <Hotkey lang="pl">W</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/004_MOVIETWO.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/005_MOVIETWO.PCX</ActiveImage>
@@ -180,6 +188,7 @@
             <Name>ESCAPE_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>U</Hotkey>
+            <Hotkey lang="pl">U</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/007_MOVIETHREE.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/008_MOVIETHREE.PCX</ActiveImage>
@@ -194,6 +203,7 @@
             <Name>OUT_OF_THE_WOODS_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>Z</Hotkey>
+            <Hotkey lang="pl">Z</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/010_MOVIEFOUR.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/011_MOVIEFOUR.PCX</ActiveImage>
@@ -208,6 +218,7 @@
             <Name>TAVERN_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>T</Hotkey>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/013_MOVIEFIVE.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/014_MOVIEFIVE.PCX</ActiveImage>
@@ -222,6 +233,7 @@
             <Name>CHASE_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>P</Hotkey>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/016_MOVIESIX.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/017_MOVIESIX.PCX</ActiveImage>
@@ -236,6 +248,7 @@
             <Name>REUNITED_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>R</Hotkey>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/019_MOVIESEVEN.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/020_MOVIESEVEN.PCX</ActiveImage>
@@ -249,6 +262,7 @@
         <MenuItem>
             <Name>TIGER_ISLAND_MOVIE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/022_MOVIEEIGHT.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/023_MOVIEEIGHT.PCX</ActiveImage>
@@ -263,6 +277,7 @@
             <Name>WE_MEET_AGAIN_MOVIE_BUTTON</Name>
             <Type>Button</Type>
             <Hotkey>S</Hotkey>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/025_MOVIENINE.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/026_MOVIENINE.PCX</ActiveImage>
@@ -276,6 +291,7 @@
         <MenuItem>
             <Name>CEREMONY_MOVIE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">C</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/028_MOVIETEN.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/029_MOVIETEN.PCX</ActiveImage>
@@ -289,6 +305,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">O</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/031_BACK.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/REPLAYMOVIES/032_BACK.PCX</ActiveImage>
@@ -320,6 +337,7 @@
         <MenuItem>
             <Name>NEW_GAME_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">N</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/001_NEWGAME.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/002_NEWGAME.PCX</ActiveImage>
@@ -332,6 +350,7 @@
         <MenuItem>
             <Name>LOAD_GAME_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">G</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/003_LOADGAME.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/004_LOADGAME.PCX</ActiveImage>
@@ -344,18 +363,19 @@
         <MenuItem>
             <Name>LOAD_CUSTOM_LEVEL_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">C</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/005_LOADCUSTOM.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/006_LOADCUSTOM.PCX</ActiveImage>
             <Position x="124" y="280" />
             <GeneratedEvent>
-                <Type>SwitchPage</Type>
-                <PageName>MenuPage_SinglePlayer_LoadCustomLevel</PageName>
+                <Type>NotImplemented</Type>
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <Name>SAVE_GAME_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">Z</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/007_SAVEGAME.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/008_SAVEGAME.PCX</ActiveImage>
@@ -368,19 +388,20 @@
         <MenuItem>
             <Name>UPLOAD_SCORES_BUTTON</Name>
             <Type>Button</Type>
-            <State>Disabled</State>
+            <Hotkey lang="pl">W</Hotkey>
+            <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/009_UPLOADSCORES.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/010_UPLOADSCORES.PCX</ActiveImage>
             <DisabledImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/011_UPLOADSCORES.PCX</DisabledImage>
             <Position x="168" y="350" />
             <GeneratedEvent>
-                <Type>SwitchPage</Type>
-                <PageName>MenuPage_SinglePlayer_UploadScores</PageName>
+                <Type>NotImplemented</Type>
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">O</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/012_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/013_PREVIOUSMENU.PCX</ActiveImage>
@@ -414,6 +435,7 @@
         <MenuItem>
             <Name>LA_ROCA_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/001_LEVELONE.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/002_LEVELONE.PCX</ActiveImage>
@@ -429,6 +451,7 @@
         <MenuItem>
             <Name>BATTLEMENTS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">B</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -450,6 +473,7 @@
         <MenuItem>
             <Name>FOOTPATH_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -471,6 +495,7 @@
         <MenuItem>
             <Name>DARK_WOODS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -492,6 +517,7 @@
         <MenuItem>
             <Name>TOWNSHIP_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">M</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -513,6 +539,7 @@
         <MenuItem>
             <Name>PUERTO_LOBOS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">L</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -534,6 +561,7 @@
         <MenuItem>
             <Name>DOCKS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">D</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -555,6 +583,7 @@
         <MenuItem>
             <Name>SHIPYARDS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -576,6 +605,7 @@
         <MenuItem>
             <Name>PIRATES_COVE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">W</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -597,6 +627,7 @@
         <MenuItem>
             <Name>CLIFFS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">K</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -639,6 +670,7 @@
         <MenuItem>
             <Name>UNDERSEA_CAVES_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">G</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -660,6 +692,7 @@
         <MenuItem>
             <Name>TIGER_ISLAND_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -681,6 +714,7 @@
         <MenuItem>
             <Name>TEMPLE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -702,6 +736,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/043_BACK.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/044_BACK.PCX</ActiveImage>
@@ -758,6 +793,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/001_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/002_PREVIOUSMENU.PCX</ActiveImage>
@@ -791,6 +827,7 @@
         <MenuItem>
             <Name>LA_ROCA_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Active</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -810,6 +847,7 @@
         <MenuItem>
             <Name>BATTLEMENTS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">B</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -829,6 +867,7 @@
         <MenuItem>
             <Name>FOOTPATH_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -848,6 +887,7 @@
         <MenuItem>
             <Name>DARK_WOODS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">R</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -867,6 +907,7 @@
         <MenuItem>
             <Name>TOWNSHIP_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">M</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -886,6 +927,7 @@
         <MenuItem>
             <Name>PUERTO_LOBOS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">L</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -905,6 +947,7 @@
         <MenuItem>
             <Name>DOCKS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">D</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -924,6 +967,7 @@
         <MenuItem>
             <Name>SHIPYARDS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -943,6 +987,7 @@
         <MenuItem>
             <Name>PIRATES_COVE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">W</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -962,6 +1007,7 @@
         <MenuItem>
             <Name>CLIFFS_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">K</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1000,6 +1046,7 @@
         <MenuItem>
             <Name>UNDERSEA_CAVES_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">G</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1019,6 +1066,7 @@
         <MenuItem>
             <Name>TIGER_ISLAND_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1038,6 +1086,7 @@
         <MenuItem>
             <Name>TEMPLE_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1057,6 +1106,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/043_BACK.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LEVELS/044_BACK.PCX</ActiveImage>
@@ -1088,13 +1138,14 @@
         <MenuItem>
             <Name>LA_ROCA_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>1</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1102,6 +1153,7 @@
         <MenuItem>
             <Name>LA_ROCA_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1123,6 +1175,7 @@
         <MenuItem>
             <Name>LA_ROCA_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1143,7 +1196,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1175,13 +1229,14 @@
         <MenuItem>
             <Name>LEVEL_2_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>2</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1189,6 +1244,7 @@
         <MenuItem>
             <Name>LEVEL_2_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1210,6 +1266,7 @@
         <MenuItem>
             <Name>LEVEL_2_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1230,7 +1287,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1262,13 +1320,14 @@
         <MenuItem>
             <Name>LEVEL_3_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>3</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1276,6 +1335,7 @@
         <MenuItem>
             <Name>LEVEL_3_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1297,6 +1357,7 @@
         <MenuItem>
             <Name>LEVEL_3_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1317,7 +1378,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1349,13 +1411,14 @@
         <MenuItem>
             <Name>LEVEL_4_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>4</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1363,6 +1426,7 @@
         <MenuItem>
             <Name>LEVEL_4_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1384,6 +1448,7 @@
         <MenuItem>
             <Name>LEVEL_4_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1404,7 +1469,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1436,13 +1502,14 @@
         <MenuItem>
             <Name>LEVEL_5_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>5</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1450,6 +1517,7 @@
         <MenuItem>
             <Name>LEVEL_5_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1471,6 +1539,7 @@
         <MenuItem>
             <Name>LEVEL_5_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1491,7 +1560,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1523,13 +1593,14 @@
         <MenuItem>
             <Name>LEVEL_6_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>6</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1537,6 +1608,7 @@
         <MenuItem>
             <Name>LEVEL_6_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1558,6 +1630,7 @@
         <MenuItem>
             <Name>LEVEL_6_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1578,7 +1651,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1610,13 +1684,14 @@
         <MenuItem>
             <Name>LEVEL_7_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>7</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1624,6 +1699,7 @@
         <MenuItem>
             <Name>LEVEL_7_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1645,6 +1721,7 @@
         <MenuItem>
             <Name>LEVEL_7_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1665,7 +1742,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1697,13 +1775,14 @@
         <MenuItem>
             <Name>LEVEL_8_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>8</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1711,6 +1790,7 @@
         <MenuItem>
             <Name>LEVEL_8_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1732,6 +1812,7 @@
         <MenuItem>
             <Name>LEVEL_8_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1752,7 +1833,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1784,13 +1866,14 @@
         <MenuItem>
             <Name>LEVEL_9_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>9</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1798,6 +1881,7 @@
         <MenuItem>
             <Name>LEVEL_9_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1819,6 +1903,7 @@
         <MenuItem>
             <Name>LEVEL_9_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1839,7 +1924,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1871,13 +1957,14 @@
         <MenuItem>
             <Name>LEVEL_10_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>10</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1885,6 +1972,7 @@
         <MenuItem>
             <Name>LEVEL_10_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1906,6 +1994,7 @@
         <MenuItem>
             <Name>LEVEL_10_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1926,7 +2015,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -1958,13 +2048,14 @@
         <MenuItem>
             <Name>LEVEL_11_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>11</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -1972,6 +2063,7 @@
         <MenuItem>
             <Name>LEVEL_11_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -1993,6 +2085,7 @@
         <MenuItem>
             <Name>LEVEL_11_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2013,7 +2106,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -2045,13 +2139,14 @@
         <MenuItem>
             <Name>LEVEL_12_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>12</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -2059,6 +2154,7 @@
         <MenuItem>
             <Name>LEVEL_12_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2080,6 +2176,7 @@
         <MenuItem>
             <Name>LEVEL_12_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2100,7 +2197,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -2132,13 +2230,14 @@
         <MenuItem>
             <Name>LEVEL_13_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>13</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -2146,6 +2245,7 @@
         <MenuItem>
             <Name>LEVEL_13_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2167,6 +2267,7 @@
         <MenuItem>
             <Name>LEVEL_13_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2187,7 +2288,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -2219,13 +2321,14 @@
         <MenuItem>
             <Name>LEVEL_14_START_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">S</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/001_START.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/002_START.PCX</ActiveImage>
             <Position x="256" y="215" />
             <GeneratedEvent>
                 <Type>LoadGame</Type>
-                <IsNewGame>true</IsNewGame>
+                <IsNewGame>false</IsNewGame>
                 <LevelNumber>14</LevelNumber>
                 <CheckpointNumber>0</CheckpointNumber>
             </GeneratedEvent>
@@ -2233,6 +2336,7 @@
         <MenuItem>
             <Name>LEVEL_14_LOAD_CHECKPOINT_1_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">1</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2254,6 +2358,7 @@
         <MenuItem>
             <Name>LEVEL_14_LOAD_CHECKPOINT_2_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">2</Hotkey>
             <State>Disabled</State>
             <StateCondition>
                 <ConditionForState>Inactive</ConditionForState>
@@ -2274,7 +2379,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/009_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/LOAD/CHECKPOINTS/010_PREVIOUSMENU.PCX</ActiveImage>
@@ -2305,7 +2411,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/001_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/002_PREVIOUSMENU.PCX</ActiveImage>
@@ -2343,7 +2450,8 @@
         </MenuItem>
         <MenuItem>
             <Name>BACK_BUTTON</Name>
-            <Type>Button</Type> 
+            <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/001_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/SINGLEPLAYER/SAVE/002_PREVIOUSMENU.PCX</ActiveImage>
@@ -2375,6 +2483,7 @@
         <MenuItem>
             <Name>YES_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/QUIT/001_YES.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/QUIT/002_YES.PCX</ActiveImage>
@@ -2386,6 +2495,7 @@
         <MenuItem>
             <Name>NO_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">N</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/QUIT/003_NO.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/QUIT/004_NO.PCX</ActiveImage>
@@ -2419,37 +2529,46 @@
             <!-- Player profiles are not supported -->
             <Name>EDIT_PLAYERS_BUTTON</Name>
             <Type>Button</Type>
-            <State>Disabled</State>
+            <Hotkey lang="pl">E</Hotkey>
+            <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/001_EDITPLAYERS.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/002_EDITPLAYERS.PCX</ActiveImage>
             <DisabledImage>/MENU_OPTIONS/editplayers_disabled.png</DisabledImage>
             <Position x="188" y="225" />
+            <GeneratedEvent>
+                <Type>NotImplemented</Type>
+            </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <Name>DIFFICULTY_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/003_DIFFICULTY.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/004_DIFFICULTY.PCX</ActiveImage>
             <Position x="210" y="260" />
             <GeneratedEvent>
-                <Type>SwitchPage</Type>
-                <PageName>MenuPage_Options_Difficulty</PageName>
+                <Type>NotImplemented</Type>
             </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <!-- Key rebinding is not supported -->
             <Name>CONTROLS_BUTTON</Name>
             <Type>Button</Type>
-            <State>Disabled</State>
+            <Hotkey lang="pl">S</Hotkey>
+            <State>Inactive</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/005_CONTROLS.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/006_CONTROLS.PCX</ActiveImage>
             <DisabledImage>/MENU_OPTIONS/controls_disabled.png</DisabledImage>
             <Position x="220" y="295" />
+            <GeneratedEvent>
+                <Type>NotImplemented</Type>
+            </GeneratedEvent>
         </MenuItem>
         <MenuItem>
             <Name>AUDIO_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">D</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/007_AUDIO.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/008_AUDIO.PCX</ActiveImage>
@@ -2463,6 +2582,7 @@
         <MenuItem>
             <Name>DISPLAY_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">E</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/010_DISPLAY.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/011_DISPLAY.PCX</ActiveImage>
@@ -2475,6 +2595,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/012_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/013_PREVIOUSMENU.PCX</ActiveImage>
@@ -2508,6 +2629,7 @@
         <MenuItem>
             <Name>SOUND_ON_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">D</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>SoundOn</ConditionType>
@@ -2615,6 +2737,7 @@
         <MenuItem>
             <Name>SOUND_OFF_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">D</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>SoundOff</ConditionType>
@@ -2680,6 +2803,7 @@
         <MenuItem>
             <Name>VOICE_ON_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">G</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>VoiceOn</ConditionType>
@@ -2712,6 +2836,7 @@
         <MenuItem>
             <Name>VOICE_OFF_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">G</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>VoiceOff</ConditionType>
@@ -2745,6 +2870,7 @@
         <MenuItem>
             <Name>AMBIENT_ON_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>AmbientOn</ConditionType>
@@ -2777,6 +2903,7 @@
         <MenuItem>
             <Name>AMBIENT_OFF_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">T</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>AmbientOff</ConditionType>
@@ -2810,6 +2937,7 @@
         <MenuItem>
             <Name>MUSIC_ON_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">M</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>MusicOn</ConditionType>
@@ -2896,6 +3024,7 @@
         <MenuItem>
             <Name>MUSIC_OFF_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">M</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>MusicOff</ConditionType>
@@ -2951,6 +3080,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/012_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/013_PREVIOUSMENU.PCX</ActiveImage>
@@ -2984,6 +3114,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DIFFICULTY/001_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DIFFICULTY/002_PREVIOUSMENU.PCX</ActiveImage>
@@ -3017,6 +3148,7 @@
         <MenuItem>
             <Name>FULLSCREEN_ON_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>FullscreenOn</ConditionType>
@@ -3052,6 +3184,7 @@
         <MenuItem>
             <Name>FULLSCREEN_OFF_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">O</Hotkey>
             <State>Active</State>
             <VisibilityCondition>
                 <ConditionType>FullscreenOff</ConditionType>
@@ -3087,6 +3220,7 @@
         <MenuItem>
             <Name>BACK_BUTTON</Name>
             <Type>Button</Type>
+            <Hotkey lang="pl">P</Hotkey>
             <State>Active</State>
             <InactiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DISPLAY/019_PREVIOUSMENU.PCX</InactiveImage>
             <ActiveImage>/STATES/MENU/IMAGES/MAIN/OPTIONS/DISPLAY/020_PREVIOUSMENU.PCX</ActiveImage>

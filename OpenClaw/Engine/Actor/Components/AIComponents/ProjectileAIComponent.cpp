@@ -24,6 +24,7 @@ const char* ProjectileAIComponent::g_Name = "ProjectileAIComponent";
 ProjectileAIComponent::ProjectileAIComponent()
     :
     m_Damage(0),
+    m_ExplosionDamage(50),
     m_DamageType(DamageType_None),
     m_pPhysics(nullptr),
     m_IsActive(true),
@@ -58,6 +59,7 @@ bool ProjectileAIComponent::VInit(TiXmlElement* pData)
     std::string damageTypeStr;
 
     ParseValueFromXmlElem(&m_Damage, pData->FirstChildElement("Damage"));
+    ParseValueFromXmlElem(&m_ExplosionDamage, pData->FirstChildElement("ExplosionDamage"));
     ParseValueFromXmlElem(&damageTypeStr, pData->FirstChildElement("ProjectileType"));
     ParseValueFromXmlElem(&m_ProjectileSpeed, pData->FirstChildElement("ProjectileSpeed"), "x", "y");
     ParseValueFromXmlElem(&m_SourceActorId, pData->FirstChildElement("SourceActorId"));
@@ -168,7 +170,7 @@ void ProjectileAIComponent::Detonate()
         ActorTemplates::CreateAreaDamage(
             m_pOwner->GetPositionComponent()->GetPosition(),
             Point(150, 150),
-            50,
+            m_ExplosionDamage,
             CollisionFlag_Explosion,
             "Circle",
             DamageType_Explosion,
@@ -191,7 +193,7 @@ void ProjectileAIComponent::OnCollidedWithActor(Actor* pActorWhoWasShot)
 {
     shared_ptr<HealthComponent> pHealthComponent =
         MakeStrongPtr(pActorWhoWasShot->GetComponent<HealthComponent>(HealthComponent::g_Name));
-    if (pHealthComponent)
+    if (pHealthComponent && m_Damage > 0)
     {
         SDL_Rect areaDamageAABB = g_pApp->GetGameLogic()->VGetGamePhysics()->VGetAABB(m_pOwner->GetGUID(), false);
         Point projectileSpeed = m_pPhysics->VGetVelocity(m_pOwner->GetGUID());

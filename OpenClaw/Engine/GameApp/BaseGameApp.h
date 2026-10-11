@@ -270,6 +270,8 @@ public:
     // This is provided to be used the engine
     bool LoadStrings(std::string language);
     std::string GetString(std::string stringId);
+    // Language of the original game data (CLAW.REZ), e.g. "en" or "pl" for "Kapitan Pazur"
+    const std::string& GetGameDataLanguage() const { return m_GameDataLanguage; }
     Point GetScale();
     void SetScale(Point scale);
     uint32 GetWindowFlags();
@@ -329,6 +331,7 @@ protected:
     TouchManager *m_pTouchManager;
 
     LocalizedStringsMap m_LocalizedStringsMap;
+    std::string m_GameDataLanguage;
     FontMap m_FontMap;
 
     GameOptions m_GameOptions;

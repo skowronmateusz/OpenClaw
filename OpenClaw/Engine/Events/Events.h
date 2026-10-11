@@ -2532,6 +2532,33 @@ public:
 };
 
 //---------------------------------------------------------------------------------------------------------------------
+// EventData_Show_Message - shows a short localized message on top of the menu / game, e.g. "NotImplemented"
+//---------------------------------------------------------------------------------------------------------------------
+class EventData_Show_Message : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+
+    EventData_Show_Message() { }
+    EventData_Show_Message(const std::string& messageId) : m_MessageId(messageId) { }
+
+    virtual const EventType& VGetEventType(void) const { return sk_EventType; }
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EventData_Show_Message(m_MessageId));
+    }
+    virtual void VSerialize(std::ostringstream& out) const { out << m_MessageId; }
+    virtual void VDeserialize(std::istringstream& in) { in >> m_MessageId; }
+
+    virtual const char* GetName(void) const { return "EventData_Show_Message"; }
+
+    const std::string& GetMessageId() const { return m_MessageId; }
+
+private:
+    std::string m_MessageId;
+};
+
+//---------------------------------------------------------------------------------------------------------------------
 // EventData_Play_Cutscene - plays given movies one after another, then queues finished event (if any)
 //---------------------------------------------------------------------------------------------------------------------
 class EventData_Play_Cutscene : public BaseEventData

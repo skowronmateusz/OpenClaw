@@ -970,16 +970,16 @@ void ClawControllableComponent::VOnAnimationFrameChanged(Animation* pAnimation, 
             }
             else
             {
-                int damage = 10;
-
-                // When Claw is ducking he deals 1/2 damage
+                // Damage values of the original game (CLAW.EXE): sword swipe, punch, kick
+                // and uppercut deal 5, ducking swipe deals 2, catnip doubles the damage
+                int damage = 5;
                 if (IsDucking())
                 {
-                    damage = 5;
+                    damage = 2;
                 }
                 if (m_pPowerupComponent->HasPowerup(PowerupType_Catnip))
                 {
-                    damage = 100;
+                    damage *= 2;
                 }
 
                 ActorTemplates::CreateAreaDamage(

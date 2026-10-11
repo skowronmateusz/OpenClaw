@@ -354,18 +354,26 @@ bool BaseGameLogic::VLoadGame(const char* xmlLevelResource)
         }
     }
 
-    // Load game save data
-    const CheckpointSave* pCheckpointSave = m_pGameSaveMgr->GetCheckpointSave(
-        m_pCurrentLevel->m_LeveNumber, m_pCurrentLevel->m_LoadedCheckpoint);
+    // Load game save data. A new game starts with fresh stats on any level, only loading
+    // a game continues with the stats Claw had when he reached the level / checkpoint.
+    const CheckpointSave* pCheckpointSave = NULL;
+    if (!m_pCurrentLevel->m_bIsNewGame)
+    {
+        pCheckpointSave = m_pGameSaveMgr->GetCheckpointSave(
+            m_pCurrentLevel->m_LeveNumber, m_pCurrentLevel->m_LoadedCheckpoint);
+        if (pCheckpointSave == NULL)
+        {
+            // Can happen e.g. when skipping menu to a level which was not reached yet
+            LOG_WARNING("No save for level " + ToStr(m_pCurrentLevel->m_LeveNumber) + ", checkpoint " +
+                ToStr(m_pCurrentLevel->m_LoadedCheckpoint) + " - using new game stats");
+        }
+    }
     CheckpointSave defaultCheckpointSave;
     if (pCheckpointSave == NULL)
     {
-        // Can happen e.g. when skipping menu to a level which was not reached yet
-        LOG_WARNING("No save for level " + ToStr(m_pCurrentLevel->m_LeveNumber) + ", checkpoint " +
-            ToStr(m_pCurrentLevel->m_LoadedCheckpoint) + " - using new game stats");
         defaultCheckpointSave.checkpointIdx = m_pCurrentLevel->m_LoadedCheckpoint;
         defaultCheckpointSave.health = 100;
-        defaultCheckpointSave.lives = 3;
+        defaultCheckpointSave.lives = 7;
         defaultCheckpointSave.bulletCount = 10;
         defaultCheckpointSave.magicCount = 5;
         defaultCheckpointSave.dynamiteCount = 3;

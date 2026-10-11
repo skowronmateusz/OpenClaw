@@ -11,7 +11,7 @@
 		</SpecialAnimation>
 	</AnimationComponent>
 	<ProjectileAIComponent>
-		<Damage>100</Damage>
+		<Damage>25</Damage>
 		<ProjectileType>DamageType_FrostSword</ProjectileType>
 		<!-- CAN BE MODIFIED IN CODE -->
 		<ProjectileSpeed x="9.500000" y="0.000000" /> 

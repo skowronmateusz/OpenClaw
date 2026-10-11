@@ -32,6 +32,8 @@ private:
 
     // XML Data
     int32 m_Damage;
+    // Damage of the area explosion of an exploding projectile, on top of the direct hit damage
+    int32 m_ExplosionDamage;
     DamageType m_DamageType;
     Point m_ProjectileSpeed;
     int m_SourceActorId;
