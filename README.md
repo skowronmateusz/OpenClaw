@@ -41,13 +41,13 @@ brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx
 
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
+cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/include/SDL2" \
   -DCMAKE_EXE_LINKER_FLAGS="-L/opt/homebrew/lib"
 make -j$(sysctl -n hw.ncpu)
 ```
 
-`-DCMAKE_OSX_ARCHITECTURES=arm64` matters when CMake runs under Rosetta (e.g. installed in `/usr/local`), otherwise the build targets x86_64 and the linker rejects the Homebrew libraries. The executable ends up in `Build_Release/openclaw`.
+`-DCMAKE_POLICY_VERSION_MINIMUM=3.5` is needed with CMake 4. `-DCMAKE_OSX_ARCHITECTURES=arm64` matters when CMake runs under Rosetta (e.g. installed in `/usr/local`), otherwise the build targets x86_64 and the linker rejects the Homebrew libraries. The executable ends up in `Build_Release/openclaw`.
 
 To run it from the repository, copy the game files from the table above into `Build_Release` (they are in `.gitignore`), zip the content of `Build_Release/ASSETS` into `Build_Release/ASSETS.ZIP` and start it there:
 

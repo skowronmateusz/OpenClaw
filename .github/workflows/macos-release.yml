@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install dependencies
         run: brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx dylibbundler
@@ -28,7 +28,7 @@ jobs:
           BREW_PREFIX="$(brew --prefix)"
           mkdir build
           cd build
-          cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
+          cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_CXX_FLAGS="-I$BREW_PREFIX/include -I$BREW_PREFIX/include/SDL2" \
             -DCMAKE_EXE_LINKER_FLAGS="-L$BREW_PREFIX/lib"
           make -j"$(sysctl -n hw.ncpu)"
