@@ -21,7 +21,7 @@ enum LiftableEnemyState
 //  - enemy cannot be lifted while striking / falling and for 1.5s after it recovered from a throw
 //  - every enemy the thrown one flies through loses the thrown enemy's attack damage
 //  - thrown enemy bounces off the ground twice (velocity * 1/3), stops on the third landing,
-//    lies for 0.5s, then loses 4 (original units) health - it dies or gets up and fights on
+//    lies for 0.5s, then loses 4 health - it dies or gets up and fights on
 //  - thrown enemy which is still in the air 2s after the throw (fell off) dies
 // Enemy uses its lifted / lifted1, lifted2 and thrown animations.
 class LiftableEnemyComponent : public LiftableComponent, public HealthObserver

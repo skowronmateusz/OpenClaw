@@ -9,8 +9,8 @@ const char* PowderKegComponent::g_Name = "PowderKegComponent";
 PowderKegComponent::PowderKegComponent()
     :
     m_ThrowSpeed(Point(7.0, -1.5)),
-    // Original game: keg's damage is 20, OpenClaw deals 2x the original damage to enemies
-    m_ThrowDamage(40),
+    // Original game: keg's damage is 20
+    m_ThrowDamage(20),
     m_ThrowGravityScale(1.0f),
     m_MaxFlyTime(5000),
     m_State(PowderKegState_Idle),

@@ -16,9 +16,9 @@ LiftableEnemyComponent::LiftableEnemyComponent()
     m_CarryOffset(Point(5, -78)),
     m_ThrowGravityScale(1.0f),
     // Original game: thrown enemy loses 4 health, hit enemy loses thrown enemy's attack damage (10 for
-    // most enemies). OpenClaw deals 2x the original damage to enemies (Claw's sword swipe: 5 -> 10)
-    m_ThrowDamage(20),
-    m_ThrowSelfDamage(8),
+    // most enemies)
+    m_ThrowDamage(10),
+    m_ThrowSelfDamage(4),
     m_MaxFlyTime(2000),
     m_MaxBounces(2),
     m_BounceSpeedFactor(1.0f / 3.0f),

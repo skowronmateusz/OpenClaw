@@ -1599,9 +1599,8 @@ namespace ActorTemplates
         pActor->LinkEndChild(CreateAnimationComponent("/LEVEL1/ANIS/POWDERKEG/*", true));
         pActor->LinkEndChild(CreateDestroyableComponent(true, "explode", { SOUND_LEVEL1_KEG_EXPLODE }));
         pActor->LinkEndChild(CreateHealthComponent(1, 1));
-        // Original game: keg's explosion deals its damage (20) to Claw and 2x as much in OpenClaw units to enemies
+        // Original game: keg's explosion deals its damage (20) to Claw and to enemies
         TiXmlElement* pExplodeableElem = CreateExplodeableComponent(Point(140, 140), damage);
-        XML_ADD_TEXT_ELEMENT("ClawDamage", "20", pExplodeableElem);
         pActor->LinkEndChild(pExplodeableElem);
         // Lets Claw lift, carry and throw the keg
         pActor->LinkEndChild(new TiXmlElement("PowderKegComponent"));
@@ -1864,13 +1863,13 @@ namespace ActorTemplates
             TiXmlElement* pLiftableElem = new TiXmlElement("LiftableEnemyComponent");
 
             // In the original game the enemy hit by a thrown enemy loses as much health as the thrown
-            // enemy's attack deals. OpenClaw's damage to enemies is 2x the original one (Claw's sword: 5 -> 10)
+            // enemy's attack deals
             TiXmlElement* pDamageElem = GetTiXmlElementFromPath(pActorElem,
                 "Actor.MeleeAttackAIStateComponent.Attacks.AttackAction.Damage");
             int attackDamage = 0;
             if (pDamageElem != NULL && ParseValueFromXmlElem(&attackDamage, pDamageElem) && attackDamage > 0)
             {
-                XML_ADD_TEXT_ELEMENT("ThrowDamage", ToStr(2 * attackDamage).c_str(), pLiftableElem);
+                XML_ADD_TEXT_ELEMENT("ThrowDamage", ToStr(attackDamage).c_str(), pLiftableElem);
             }
 
             pActorElem->LinkEndChild(pLiftableElem);
