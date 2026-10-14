@@ -1,0 +1,71 @@
+name: macOS app
+
+# Every push and pull request builds OpenClaw.app and the disk image (downloadable from the run).
+# Pushing a tag v<version> (e.g. v1.0.0) also publishes a GitHub release with the disk image.
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # Homebrew bottles of the runner's macOS are bundled, so it sets the oldest supported macOS
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf sdl2_gfx dylibbundler
+
+      - name: Build
+        run: |
+          BREW_PREFIX="$(brew --prefix)"
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS="-I$BREW_PREFIX/include -I$BREW_PREFIX/include/SDL2" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L$BREW_PREFIX/lib"
+          make -j"$(sysctl -n hw.ncpu)"
+
+      - name: Package
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            VERSION="$GITHUB_REF_NAME"
+          else
+            VERSION="dev-${GITHUB_SHA::7}"
+          fi
+          Scripts/package_macos.sh "$VERSION"
+
+      - name: Smoke test
+        # Without the game data the app must start, create its data folder and exit with an error
+        run: |
+          export HOME="$RUNNER_TEMP/home"
+          mkdir -p "$HOME"
+          set +e
+          OPENCLAW_NO_DIALOG=1 dist/OpenClaw.app/Contents/MacOS/OpenClaw 2>&1 | tee "$RUNNER_TEMP/smoke.txt"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [[ $status -ne 1 ]] || ! grep -q "CLAW.REZ not found" "$RUNNER_TEMP/smoke.txt"; then
+            echo "Unexpected exit code $status"
+            exit 1
+          fi
+          test -f "$HOME/Library/Application Support/OpenClaw/ASSETS.ZIP"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenClaw-macos-arm64
+          path: dist/*.dmg
+
+      - name: Publish release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: OpenClaw ${{ github.ref_name }}
+          files: dist/*.dmg
+          generate_release_notes: true

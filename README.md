@@ -1,55 +1,37 @@
-# OpenClaw - Captain Claw (1997) reimplementation
+# OpenClaw for macOS - Captain Claw / Kapitan Pazur
 
- - This project is a multiplatform C++ reimplementation of original Captain Claw (1997) platformer game
- - Whole codebase was written from scratch
- - Game uses assets from original game archive (CLAW.REZ)
- - This fork is adapted to the **Polish release of the game ("Kapitan Pazur")** and builds natively on **macOS (Apple Silicon)**
+A fork of [pjasicek/OpenClaw](https://github.com/pjasicek/OpenClaw) (a C++ reimplementation of the Captain Claw platformer from 1997) that runs natively on macOS (Apple Silicon) and supports the Polish release of the game, "Kapitan Pazur". See the original repository for the project itself, building on other platforms and credits.
 
-The repository does not contain any game data. You need your own copy of the game (for the Polish release: the disc or an ISO image).
+You need your own copy of the game to play, the game data is not included.
 
-Fork of [pjasicek/OpenClaw](https://github.com/pjasicek/OpenClaw).
+## Languages
 
-**Level 1 youtube playthrough:**
+Both the English release (Captain Claw) and the Polish release (Kapitan Pazur) are supported. The language is detected automatically from `CLAW.REZ`: the Polish release is recognized by its credits, which name "Kapitan Pazur". With the Polish data the game uses the Polish menu captions and their underlined hotkeys, and the texts added by this fork (key prompts, messages for unimplemented menu items, action names in Options -> Controls) are shown in Polish.
 
-[![OpenClaw - Level 1](https://img.youtube.com/vi/ikXQNV_aw68/0.jpg)](https://www.youtube.com/watch?v=ikXQNV_aw68)
+## macOS
 
-# What this fork changes
+Download `OpenClaw-<version>-arm64.dmg` from the [releases](https://github.com/skowronmateusz/OpenClaw-PL-macos/releases) (Apple Silicon):
 
-- **Graphics:** PCX transparency is computed from the palette index, which removes the pink background behind the captions in the Polish menu.
-- **Menu:** Polish captions are centered according to their actual width.
-- **Window:** the window can be freely resized; the image scales while keeping its aspect ratio.
-- **Music:** in-level MIDI music is played through FluidSynth with the game's original soundfont.
-- **Options:** new "Screen" (fullscreen / windowed) and "Difficulty" pages; settings are saved to `config.xml`.
-- **Gameplay:** lifting, carrying and throwing powder kegs and enemies, with rules read from the original `CLAW.EXE` (see [Lifting and throwing](#lifting-and-throwing)).
-- **Movies:** playback of the original movies (logo, intro, chapter cutscenes, "Play movie" page).
-- **Fixes:** fixed a crash on the score screen and missing sounds with the Polish `CLAW.REZ`.
+1. Drag `OpenClaw.app` into Applications.
+2. Start the app. The first time, macOS blocks it because it isn't notarized: right-click it and choose Open, or allow it in System Settings > Privacy & Security. If macOS says the app is damaged: `xattr -dr com.apple.quarantine /Applications/OpenClaw.app`.
+3. Without the game data the app opens the folder `~/Library/Application Support/OpenClaw/`. Copy these files from your game disc (or a mounted ISO image) into it and start the app again:
 
-# Build status
+| File on the disc | Copy as | Purpose |
+|---|---|---|
+| `DATA/CLAW.REZ` | `CLAW.REZ` | graphics, sounds, levels (required) |
+| `MUSIC/CLAW4.SF2`, `MUSIC/CLAW.SF2` | same names | instruments for the MIDI music |
+| `MOVIES/claw.fec` | `CLAW.FEC` | movies |
 
-### Windows:
+```bash
+cd ~/Library/Application\ Support/OpenClaw
+cp "/Volumes/KAPITAN PAZUR/DATA/CLAW.REZ" .
+cp "/Volumes/KAPITAN PAZUR/MUSIC/"*.SF2 .
+cp "/Volumes/KAPITAN PAZUR/MOVIES/claw.fec" CLAW.FEC
+```
 
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/pjasicek/OpenClaw?svg=true)](https://ci.appveyor.com/project/pjasicek/captainclaw)
+The settings (`config.xml`) and saved games (`SAVES.XML`) are stored in the same folder, delete them to restore the defaults. Movies can be disabled by adding `<Movies><PlayMovies>false</PlayMovies></Movies>` to `config.xml` (inside `<Configuration>`).
 
-### Linux (debian), macOS, Windows, Android, Emscripten:
-
-[![Build Status](https://travis-ci.org/pjasicek/OpenClaw.svg?branch=master)](https://travis-ci.org/pjasicek/OpenClaw)
-
-### Static analysis / Code coverage:
-
-[![Static analysis](https://scan.coverity.com/projects/12422/badge.svg?flat=1)](https://scan.coverity.com/projects/pjasicek-captainclaw)
-
-# Tech
-
-  - SDL2 Libraries (SDL2, SDL_Image, SDL_TTF, SDL_Mixer, SDL2_Gfx) for graphics, input, font and audio
-  - Box2D Library for Physics
-  - Tinyxml library for data-driven approach
-
-# Building and running
-For all platforms you will need original `CLAW.REZ` game archive in `Build_Release` directory from original game
-
-Zip all content inside `Build_Release/ASSETS` directory to `ASSETS.ZIP` file.
-
-### macOS
+## Building from source
 
 Requirements: Xcode Command Line Tools, [Homebrew](https://brew.sh) and CMake.
 
@@ -65,124 +47,27 @@ cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release \
 make -j$(sysctl -n hw.ncpu)
 ```
 
-`-DCMAKE_OSX_ARCHITECTURES=arm64` matters when CMake runs under Rosetta (e.g. installed in `/usr/local`) - otherwise the build targets x86_64 and the linker rejects the Homebrew libraries. The executable ends up in `Build_Release/openclaw`.
+`-DCMAKE_OSX_ARCHITECTURES=arm64` matters when CMake runs under Rosetta (e.g. installed in `/usr/local`), otherwise the build targets x86_64 and the linker rejects the Homebrew libraries. The executable ends up in `Build_Release/openclaw`.
 
-**Data from the Polish disc.** Mount the disc or ISO image (double-click in Finder) and copy the following to the `Build_Release` directory:
-
-| File on the disc | Destination | Purpose |
-|---|---|---|
-| `DATA/CLAW.REZ` | `Build_Release/CLAW.REZ` | graphics, sounds, levels (required) |
-| `MUSIC/CLAW4.SF2`, `MUSIC/CLAW.SF2` | `Build_Release/` | instruments for the MIDI music |
-| `MOVIES/claw.fec` | `Build_Release/CLAW.FEC` | movies |
-
-Example (adjust the `/Volumes/...` path to the name of the mounted disc):
-
-```bash
-cp "/Volumes/KAPITAN PAZUR/DATA/CLAW.REZ" Build_Release/
-cp "/Volumes/KAPITAN PAZUR/MUSIC/"*.SF2 Build_Release/
-cp "/Volumes/KAPITAN PAZUR/MOVIES/claw.fec" Build_Release/CLAW.FEC
-```
-
-All of these files are in `.gitignore`, so they will not end up in the repository by accident. Movies can be disabled by adding `<Movies><PlayMovies>false</PlayMovies></Movies>` to `config.xml` (inside `<Configuration>`).
-
-**Running:**
+To run it from the repository, copy the game files from the table above into `Build_Release` (they are in `.gitignore`), zip the content of `Build_Release/ASSETS` into `Build_Release/ASSETS.ZIP` and start it there:
 
 ```bash
 cd Build_Release && ./openclaw
 ```
 
-On first launch the game creates `config.xml` and `SAVES.XML` from the `config.template.xml` and `SAVES.template.XML` templates. Both created files are in `.gitignore`, so your settings and saves do not end up in the repository. To restore the defaults, just delete them.
+On the first start the game creates `config.xml` and `SAVES.XML` from `config.template.xml` and `SAVES.template.XML`; both are in `.gitignore`.
 
-### Windows
-  - Project contains VS2017 solution with all libraries and include directories preset
-  - Project also contains CMake files if you want to use other IDEs.
-  ```shell script
-    mkdir build
-    cd build
-    
-    cmake -G "Visual Studio 15 2017" ..
-    msbuild OpenClaw.sln
-    # Or
-    cmake -G "NMake Makefiles" ..
-    nmake
-  ```
-  - Box2D is generated by CMake and it hardcodes the file paths. If you want to compile it on your own, you must run CMake on the CMakeLists.txt in the Box2D root directory
-  - Do not try to use different versions of SDL libraries than the ones which are already included in the Build_Release folder
+### App and disk image
 
-### Linux
-  **Prerequisites for Ubuntu 16.04 (should be almost identical for Fedora/CentOS/*):**
-  ```shell script
-  sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev
-  ``` 
-  You could also install `libtinyxml-dev` but this library will be compiled and linked from `ThirdParty/Tinyxml` directory.
-  Edit root `CMakeLists.txt` file to change this behaviour.
-  
-  **Compilation:**
-  - `git clone https://github.com/pjasicek/OpenClaw.git`
-  - CLAW.REZ iz required from original game in the OpenClaw/Build_Release folder
-  - Use `cmake` to build fresh Makefile. There is no need specific arguments.
-  - `make` (it's going to use all threads to compile, edit Makefile in Build_Release folder to whatever number of simultaneous threads you want it on your machine to run)
+`Scripts/package_macos.sh <version>` turns the built `Build_Release/openclaw` into `dist/OpenClaw.app` and `dist/OpenClaw-<version>-arm64.dmg` (needs `brew install dylibbundler`). The Homebrew libraries are copied into the app, which is signed ad-hoc. The app needs the macOS version the Homebrew libraries were built for.
 
- **Remarks:**
+GitHub Actions ([.github/workflows/macos-release.yml](.github/workflows/macos-release.yml)) builds the disk image for every push and pull request. Pushing a tag `v<version>` also publishes a release with it:
 
-  - For hearing background music play, you need to install **timidity (or timidity++)** and **freepats**. Some linux distributions come with it by default, some do not (fedora, archlinux)
-  - Does not work with SDL 2.0.6 - if you have the latest one from repository, you should be fine
-  
-### Android
-  
-  - Compilation / Deployment steps will be updated in near future, game itself is successfully running on Android
-  
-### WebAssembly (Emscripten)
-  
-  The project can be compiled as wasm code. This code is executed by modern web browsers without any additional runtime dependencies. Compiled once this code can work on any devices with different operation systems.
-  
-  **Compilation:**
-  - Install [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) from official website. I'm not sure that compilation will be successful on a Windows platform. If you use Windows then don't show off, enable Windows Subsystem for Linux (WSL), download Linux-like system (for example, Ubuntu) from Windows Store and install Emscripten SDK. It should be something like:
-    ```shell script
-    git clone https://github.com/emscripten-core/emsdk.git
-    cd emsdk
-    ./emsdk install latest
-    ./emsdk activate latest
-    source ./emsdk_env.sh
-    # Try to use latest version.
-    # If it doesn't work the project was successfully compiled on 1.39.11 version.
-    ```
-  - Make sure you have *python* and *cmake* packages. Ubuntu: `sudo apt install python cmake`.
-  - Make sure you have fresh `ASSETS.ZIP` and `CLAW.REZ` files in `Build_Release` directory.
-  - Compile:
-    ```shell script
-    mkdir build
-    cd build
-    emcmake cmake -DEmscripten=1 ..
-    # -DExtern_Config=0 parameter includes config.xml file in game resources
-    make
-    ```
-  
-  **Run:**
-  
-  You will need web server to run compiled project. There are 2 options:
-  - You can upload `openclaw.html`, `openclaw.js`, `openclaw.wasm` and `openclaw.data` (and `config.xml` if you build the project without `-DExtern_Config=0` parameter) files from `Build_Release` directory to any web server.
-  - Or run Python server:
-    ```shell script
-    cd Build_Release
-    python -m SimpleHTTPServer 8080
-    # Go to http://localhost:8080/openclaw.html
-    ``` 
-  
-  **Remarks:**
-  
-  There are some limitations:
-  - Some old web browsers does not support WebAssembly code. *Hi Internet Explorer!*
-  - Some web browsers does not support `.wav` file formats. *Microsoft? Again?*
-  - All web browsers does not support `.xmi` (MIDI) file formats. This files should be converted to another compatible formats. **All MIDI audio are disabled for now**.
-  - Some specific `SDL_Mixer` audio functions aren't implemented (*you can find it by `TODO: [EMSCRIPTEN]` search query*) but the game is playable.
-  - Death and teleport fade in effects are broken. Emscripten erases graphic buffer after each draw call. Do not use buffer from previous calls.
-  - There is a [FireFox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1292053) with a very long story which doesn't allow to prevent ALT default actions. ALT key presses will open window menu. Workarounds:
-    - Contribute to Mozilla and finally close this bug.
-    - Use fullscreen mode.
-    - Disable default ALT actions in FireFox `about:config` properties.
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
 
-# Controls
+## Controls
 
 | Default key | Action |
 |---|---|
@@ -200,11 +85,54 @@ Keys can be changed in Options → Controls, both from the main menu and the pau
 
 The alternative default layout (WASD + mouse) is enabled with `<UseAlternateControls>true</UseAlternateControls>` in `config.xml`: A/D move, W/S climb (W also jumps), Space jump, J or right mouse button attack, K or left mouse button shoot, E switch weapon, Q lift and throw.
 
-# Lifting and throwing
+## Changes
+
+Compared to the original repository:
+
+### macOS and the Polish release
+
+- Native build on macOS (Apple Silicon) with the Homebrew SDL2 libraries (also through sdl2-compat / SDL3).
+- `OpenClaw.app` and a disk image built by GitHub Actions. Started from the app, the game keeps the data of the original game, settings and saved games in `~/Library/Application Support/OpenClaw/` and asks for the missing game files.
+- Polish release support: PCX transparency is computed from the palette index (removes the pink background behind the Polish menu captions), captions are centered by their real width, the language is detected from `CLAW.REZ`, fixed a crash on the score screen and missing sounds with the Polish `CLAW.REZ`.
+- `config.xml` and `SAVES.XML` are created from templates on the first start, so they are never versioned.
+
+### Graphics and window
+
+- The window can be resized freely, the image is scaled with the aspect ratio kept.
+- The original 640x480 view at 2x scale by default. At scale 1 the 1280x960 frame showed four times more of the level than the original, including unintended parts of the background art.
+- Level backgrounds are drawn with SDL3: wrapped tile planes used sizes that SDL3 rejects as an overflow, they also wrap on negative coordinates now.
+- The loading screen is no longer zoomed in with the render scale.
+
+### Sound and movies
+
+- In-level MIDI music is played through FluidSynth with the game's original soundfont (`CLAW4.SF2` / `CLAW.SF2`, or `SDL_SOUNDFONTS`).
+- Playback of the original Smacker movies from `CLAW.FEC`: logo, intro, chapter cutscenes and the "Play movie" page.
+
+### Menu and options
+
+- Menu hotkeys follow the underlined letters of the (localized) captions, like in the original.
+- New "Screen" (fullscreen / windowed), "Difficulty" and "Controls" pages, settings are saved to `config.xml`.
+- Key rebinding in Options -> Controls (see [Controls](#controls)).
+- Menu items that aren't implemented and levels after the last implemented one show a short message instead of doing nothing.
+
+### Gameplay
+
+- Lifting, carrying and throwing powder kegs and enemies, with the rules read from the original `CLAW.EXE` (see [Lifting and throwing](#lifting-and-throwing)).
+- Claw's damage and enemy health taken from `CLAW.EXE`: melee 5 (ducking 2, catnip doubles it), pistol 8, magic 25, dynamite explosion 15, sword projectiles 25. Thrown enemies and powder kegs deal their original damage too.
+- 7 starting lives and game over when the last life is lost. A new game starts with fresh stats on any level, only Load Game uses the saved stats.
+- Enemies attack only once they are on screen. Their aggro areas were tuned for a 1280 px wide view, so with the original view they attacked from off screen.
+- Claw's melee hit area reaches from his center to the tip of the swing, so a crate right in front of him can be hit without stepping back.
+
+### Fixes
+
+- XML resources are null terminated before parsing (TinyXML read past the buffer, found by AddressSanitizer).
+- Resetting a level no longer iterates the actor map while destroying actors.
+
+## Lifting and throwing
 
 Rules reconstructed from the original `CLAW.EXE` (the Polish release from 2000) by analyzing its machine code. Function addresses in the original are given in parentheses.
 
-**Damage scale.** OpenClaw deals 2x more damage to enemies than the original (sword: 5 -> 10, enemy health is scaled accordingly), so the values "against enemies" are doubled. Claw's health (100) and the damage dealt to Claw are the same in both versions.
+All damage and health values are the same as in the original game.
 
 **What can be lifted**
 - Powder kegs and regular enemies that have `LIFTED`/`LIFTED1`, `LIFTED2` and `THROWN` animations in the game data. Bosses cannot (they have separate combat logic).
@@ -213,36 +141,15 @@ Rules reconstructed from the original `CLAW.EXE` (the Polish release from 2000) 
 - A lifted enemy does not think or attack. Claw can walk and jump with it, but not fight. When hit, crouching, grabbing a rope or stepping onto a ladder, Claw drops what is being carried.
 
 **A thrown enemy**
-- Every enemy (as well as crate or keg) it flies through loses as much health as the thrown enemy's attack strength (`0x44f340` -> `health -= attacker.damage`): 10 for an Officer, i.e. 20 in OpenClaw. The thrown enemy keeps flying.
+- Every enemy (as well as crate or keg) it flies through loses as much health as the thrown enemy's attack strength (`0x44f340` -> `health -= attacker.damage`), e.g. 10 for an Officer. The thrown enemy keeps flying.
 - It bounces off the ground twice, each time at 1/3 of the speed (`0x4412b0`, state `LS_BOUNCE`), and stops on the third contact. Hitting a wall kills its forward motion (not verified in the original).
-- It lies there for 0.5 s (`LS_PAUSE`), then loses 4 health (`0x405240`), i.e. 8 in OpenClaw. If health drops to zero it dies; otherwise it gets up and keeps fighting.
+- It lies there for 0.5 s (`LS_PAUSE`), then loses 4 health (`0x405240`). If health drops to zero it dies; otherwise it gets up and keeps fighting.
 - If it is still in the air 2 s after the throw (e.g. it fell into a pit), it dies.
 
 **Powder keg**
-- Keg damage is 20 (`0x4714c5`), i.e. 40 against enemies in OpenClaw.
+- Keg damage is 20 (`0x4714c5`).
 - A thrown keg flies through enemies, dealing each of them that damage, and explodes on hitting the ground (`0x471bb0`). In OpenClaw it also explodes on hitting a wall; this was not verified in the original.
 - It also explodes from any hit: sword, projectile, another explosion (`0x471bf0`).
-- The explosion hurts everything in range: enemies for 40, and Claw for 20 (`0x41e797`).
+- The explosion hurts everything in range, enemies and Claw, for 20 (`0x41e797`).
 
 All values can be changed in the XML of the `LiftableEnemyComponent` and `PowderKegComponent` components.
-
-# In-game images
-  -  **TODO** - add screenshots
-
-# Claw Launcher
-
-  - Precompiled for Windows natively and for Linux use through Mono runtime
-  - Locates Claw binary and corresponding config.xml file
-  - Provides GUI to modify configuration (Video/Audio/Assets)
-
-### For Linux
-
-  **Prerequisites for Ubuntu 16.04 (should be almost identical for Fedora/CentOS/*):**
-  
-  `sudo apt install mono-runtime libmono-system4.0-cil libmono-system-windows-forms4.0-cil` 
-  
-  **Then run it like this:**
-  
-  `~/OpenClaw/Build_Release$ mono ClawLauncher.exe`
- 
--  **TODO** - add screenshots

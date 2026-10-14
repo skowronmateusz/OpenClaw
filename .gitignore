@@ -41,3 +41,4 @@ build/
 side-session-notes/
 Build_Release/config.xml
 Build_Release/SAVES.XML
+dist/
